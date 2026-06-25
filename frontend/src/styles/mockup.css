@@ -62,6 +62,8 @@
     height: auto;
     flex-shrink: 0;
     object-fit: contain;
+    transform: scale(2);
+    transform-origin: left center;
   }
   .title-divider {
     width: 1px;
