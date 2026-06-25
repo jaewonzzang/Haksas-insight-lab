@@ -1,0 +1,258 @@
+// 대시보드 응답 예시 데이터. ⚠️ 예시/임시: 백엔드 /analyze 준비 시 제거/교체.
+// 수치는 legacy/mockup.html 을 그대로 옮김. (김재원 · 지식융합미디어학부 3학년)
+
+import type { DashboardResponse, RecommendedCourse } from "../types/api";
+
+// ── 카드 A: 전공 추천 (4) ──
+const major: RecommendedCourse[] = [
+  {
+    course_id: "CSE3013",
+    course_name: "머신러닝개론",
+    credit: 3,
+    grade: "강추",
+    score_percent: 92,
+    reason_short: "선이수 충족 · 유사 선배 78%",
+    kind: "major",
+    kind_label: "전공선택",
+    factors: [
+      { label: "콘텐츠 유사도", weight_percent: 88, contribution: "+26", kind: "pos" },
+      { label: "코호트 선호도", weight_percent: 78, contribution: "+24", kind: "pos" },
+      { label: "시간 가중 평점", weight_percent: 75, contribution: "+22", kind: "pos" },
+      { label: "사용자 선호 매칭", weight_percent: 60, contribution: "+12", kind: "pos" },
+      { label: "트랙 충족도", weight_percent: 0, contribution: "N/A", kind: "na" },
+      { label: "학년 적합도", weight_percent: 70, contribution: "+8", kind: "pos" },
+    ],
+    why_summary:
+      "선이수 〈선형대수〉·〈확률론〉을 모두 이수했고, 유사 선배 27명 중 21명이 같은 학기에 수강했습니다.",
+  },
+  {
+    course_id: "CSE3009",
+    course_name: "데이터베이스",
+    credit: 3,
+    grade: "강추",
+    score_percent: 87,
+    reason_short: "유사 선배 73% 수강 · 팀플 비중 높음",
+    kind: "major",
+    kind_label: "전공선택",
+    factors: [],
+    why_summary: "",
+  },
+  {
+    course_id: "CSE3018",
+    course_name: "컴퓨터네트워크",
+    credit: 3,
+    grade: "고려",
+    score_percent: 74,
+    reason_short: "선이수 부족 · 보충 권장",
+    kind: "major",
+    kind_label: "전공선택",
+    factors: [
+      { label: "콘텐츠 유사도", weight_percent: 75, contribution: "+22", kind: "pos" },
+      { label: "선이수 충족도", weight_percent: 40, contribution: "−18", kind: "neg" },
+      { label: "코호트 선호도", weight_percent: 60, contribution: "+18", kind: "pos" },
+    ],
+    why_summary: "선이수 〈운영체제〉가 누락되어 점수가 낮습니다. 운영체제 선이수 후 수강을 권장합니다.",
+  },
+  {
+    course_id: "CSE4015",
+    course_name: "컴파일러",
+    credit: 3,
+    grade: "유보",
+    score_percent: 52,
+    reason_short: "학년 권장 4학년 · 유사 선배 수강률 낮음",
+    kind: "major",
+    kind_label: "전공선택",
+    factors: [
+      { label: "학년 적합도", weight_percent: 30, contribution: "−14", kind: "neg" },
+      { label: "코호트 선호도", weight_percent: 25, contribution: "−10", kind: "neg" },
+      { label: "콘텐츠 유사도", weight_percent: 70, contribution: "+18", kind: "pos" },
+    ],
+    why_summary: "졸업생 다수가 4학년에 수강한 과목입니다. 다음 학기보다 4학년 1학기 수강을 권장합니다.",
+  },
+];
+
+// ── 카드 A: 교양 추천 (4) ──
+const general: RecommendedCourse[] = [
+  {
+    course_id: "STS2001",
+    course_name: "자연과 인간",
+    credit: 3,
+    grade: "강추",
+    score_percent: 88,
+    reason_short: "공통선택 ④ 미이수 영역 · S/U 옵션 제공",
+    kind: "common",
+    kind_label: "교양",
+    area_label: "공통선택 ④",
+    factors: [
+      { label: "트랙 충족도", weight_percent: 100, contribution: "+34", kind: "pos" },
+      { label: "사용자 선호 매칭", weight_percent: 80, contribution: "+22", kind: "pos" },
+      { label: "코호트 선호도", weight_percent: 65, contribution: "+18", kind: "pos" },
+      { label: "시간 가중 평점", weight_percent: 50, contribution: "+14", kind: "pos" },
+    ],
+    why_summary: "공통선택 ④ 인간과 과학 & AI 영역이 미이수 상태이며, S/U 평가 옵션이 제공됩니다.",
+  },
+  {
+    course_id: "LCS2006",
+    course_name: "중국 언어와 문화 Ⅱ",
+    credit: 3,
+    grade: "강추",
+    score_percent: 81,
+    reason_short: "자유선택 (언어·문화) · 글로벌 언어Ⅰ 연계",
+    kind: "free",
+    kind_label: "교양",
+    area_label: "자유선택 (언어·문화)",
+    factors: [],
+    why_summary: "",
+  },
+  {
+    course_id: "STS2010",
+    course_name: "과학사",
+    credit: 3,
+    grade: "고려",
+    score_percent: 73,
+    reason_short: "자유선택 (과학·기술) · 출석 비중 보통",
+    kind: "free",
+    kind_label: "교양",
+    area_label: "자유선택 (과학·기술)",
+    factors: [],
+    why_summary: "",
+  },
+  {
+    course_id: "HSS3002",
+    course_name: "사회봉사",
+    credit: 2,
+    grade: "고려",
+    score_percent: 68,
+    reason_short: "자유선택 미체크 영역 · 1학점 · S/U",
+    kind: "free",
+    kind_label: "교양",
+    area_label: "자유선택 (봉사·리더십) · S/U",
+    factors: [],
+    why_summary: "",
+  },
+];
+
+// ── 카드 A: "과목 더 보기" 모달 후보 전체 (9) ──
+const candidates: RecommendedCourse[] = [
+  { course_id: "CSE3013", course_name: "머신러닝개론", credit: 3, grade: "강추", score_percent: 92, reason_short: "", kind: "major", kind_label: "전공선택", factors: [], why_summary: "" },
+  { course_id: "STS2001", course_name: "자연과 인간", credit: 3, grade: "강추", score_percent: 88, reason_short: "", kind: "common", kind_label: "교양", area_label: "공통선택 ④", factors: [], why_summary: "" },
+  { course_id: "CSE3009", course_name: "데이터베이스", credit: 3, grade: "강추", score_percent: 87, reason_short: "", kind: "major", kind_label: "전공선택", factors: [], why_summary: "" },
+  { course_id: "DSC3021", course_name: "데이터 시각화", credit: 3, grade: "강추", score_percent: 85, reason_short: "", kind: "major", kind_label: "전공선택", factors: [], why_summary: "" },
+  { course_id: "LCS2006", course_name: "중국 언어와 문화 Ⅱ", credit: 3, grade: "강추", score_percent: 81, reason_short: "", kind: "free", kind_label: "교양", area_label: "자유선택 (언어·문화)", factors: [], why_summary: "" },
+  { course_id: "CSE3018", course_name: "컴퓨터네트워크", credit: 3, grade: "고려", score_percent: 74, reason_short: "", kind: "major", kind_label: "전공선택", factors: [], why_summary: "" },
+  { course_id: "STS2010", course_name: "과학사", credit: 3, grade: "고려", score_percent: 73, reason_short: "", kind: "free", kind_label: "교양", area_label: "자유선택 (과학·기술)", factors: [], why_summary: "" },
+  { course_id: "HSS3002", course_name: "사회봉사", credit: 2, grade: "고려", score_percent: 68, reason_short: "", kind: "free", kind_label: "교양", area_label: "자유선택 (봉사·리더십) · S/U", factors: [], why_summary: "" },
+  { course_id: "CSE4015", course_name: "컴파일러", credit: 3, grade: "유보", score_percent: 52, reason_short: "", kind: "major", kind_label: "전공선택", factors: [], why_summary: "" },
+];
+
+export const mockDashboard: DashboardResponse = {
+  profile: {
+    name: "김재원",
+    department: "아트&테크놀로지",
+    year: "3학년",
+    analysis_date: "2026.04.30",
+    report_semester: "2026-1학기",
+    next_semester: "2026-2",
+  },
+  kpi: {
+    earned_credits: 78,
+    gpa: 3.56,
+    gpa_scale: 4.3,
+    similar_alumni_n: 27,
+  },
+  card_a: { major, general, candidates },
+  card_c: {
+    cohort_label: "아트&테크놀로지 · 졸업생 184명",
+    entries: [
+      {
+        id: "cs",
+        label: "컴퓨터공학 (다전공)",
+        tag: "최다",
+        count: 57,
+        share_percent: 31,
+        bar_percent: 100,
+        detail_label: "이 경로 졸업생 57명의 평균 추가 이수 학점",
+        credits: { major1: 63, major2: 42, major3: null },
+      },
+      {
+        id: "single",
+        label: "단일전공 유지",
+        count: 44,
+        share_percent: 24,
+        bar_percent: 77,
+        detail_label: "이 경로 졸업생 44명의 평균 이수 학점",
+        credits: { major1: 82, major2: null, major3: null },
+      },
+      {
+        id: "biz",
+        label: "경영학 (다전공)",
+        count: 35,
+        share_percent: 19,
+        bar_percent: 61,
+        detail_label: "이 경로 졸업생 35명의 평균 추가 이수 학점",
+        credits: { major1: 65, major2: 39, major3: null },
+      },
+      {
+        id: "art",
+        label: "컴퓨터공학 + 경영학 (3전공)",
+        count: 26,
+        share_percent: 14,
+        bar_percent: 45,
+        detail_label: "이 경로 졸업생 26명의 평균 추가 이수 학점",
+        credits: { major1: 61, major2: 38, major3: 22 },
+      },
+      {
+        id: "other",
+        label: "기타 경로 4건",
+        count: 22,
+        share_percent: 12,
+        bar_percent: 39,
+        detail_label: "",
+        credits: { major1: null, major2: null, major3: null },
+        dim: true,
+      },
+    ],
+    baseline_note:
+      "추가전공은 주 전공을 포함하여 제3전공까지 이수할 수 있다 · 연계전공·학생설계전공의 이수학점은 36학점 이상을 원칙으로 한다 · 심화전공은 전공 60학점 이상 이수함을 원칙으로 한다 · 다전공 이수로 전공간 이수과목이 중복된 경우 6학점 이내에서 중복 인정될 수 있으며, 본인의 학점 인정 사항은 소속 학과 협의에 따른다.",
+  },
+  card_d: {
+    similar_label: "유사 경로 27명",
+    sample_size: 27,
+    entries: [
+      { cluster_label: "IT 취업", type: "job", count: 13, share_percent: 48 },
+      { cluster_label: "대학원 진학", type: "grad", count: 11, share_percent: 41 },
+      { cluster_label: "기타 (창업·해외 등)", type: "other", count: 3, share_percent: 11 },
+    ],
+    sub_title: "대학원 진학자 진학 분야 (카테고리)",
+    sub_chips: [
+      { label: "국내 대학원 (CS)", n: 7 },
+      { label: "국내 대학원 (데이터)", n: 2 },
+      { label: "해외 대학원", n: 2 },
+    ],
+    pattern_summary:
+      "이 27명 중 대학원 진학자들은 3학년에 〈기초머신러닝〉과 〈시스템프로그래밍〉을 같은 학기에 이수한 비율이 높았습니다.",
+  },
+  cluster: {
+    factors: [
+      { label: "전공 과목 중첩", percent: 88 },
+      { label: "이수 순서 패턴", percent: 72 },
+      { label: "학년별 학점 분포", percent: 65 },
+      { label: "교양 선택 경향", percent: 51 },
+    ],
+    common_courses: [
+      { name: "자료구조", n: 27 },
+      { name: "알고리즘설계와분석", n: 25 },
+      { name: "선형대수학", n: 24 },
+      { name: "확률론", n: 22 },
+      { name: "머신러닝", n: 19 },
+      { name: "데이터베이스시스템", n: 18 },
+      { name: "소프트웨어공학", n: 15 },
+    ],
+    career_patterns: [
+      { label: "대학원", type: "grad", text: "3학년에 〈기초머신러닝〉과 〈시스템프로그래밍〉을 같은 학기에 이수한 비율이 91%" },
+      { label: "IT 취업", type: "job", text: "3~4학년에 〈데이터베이스시스템〉와 〈소프트웨어공학〉을 모두 이수한 비율이 높음" },
+      { label: "기타", type: "other", text: "표본 부족 · 패턴 도출 보류" },
+    ],
+    summary: "이수 과목 80개 중 22개가 일치하고 학년별 진행 패턴이 유사한 졸업생 27명이 추출되었습니다.",
+  },
+};

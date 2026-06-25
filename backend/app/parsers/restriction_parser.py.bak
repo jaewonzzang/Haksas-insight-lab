@@ -1,0 +1,10 @@
+"""수강신청 참조사항 → course_restrictions 행.
+
+검증된 4가지 정형 패턴 (비정형 0건):
+- '학과명(가능)' → allowed
+- '학과명(불가능)' → forbidden
+- '학과명(1전공 가능)' → major_only_allowed
+- '학과명(1전공 불가능)' → major_only_forbidden
+"""
+
+# TODO: extract(restrictions_raw: str, course_id: str) -> list[RestrictionRow]

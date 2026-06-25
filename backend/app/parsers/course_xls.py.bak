@@ -1,0 +1,8 @@
+"""개설교과목정보.xls → courses 테이블 + parse_warnings.
+
+핵심 컬럼: 학과, 과목번호, 과목명, 학점, 수강대상, 권장학년, 과목 설명, 수강신청 참조사항.
+HTML 형식이므로 pd.read_html 사용.
+교양 판정: 학과 == '전인교육원' → is_general = 1.
+"""
+
+# TODO: parse(xls_path) -> list[CourseRow]

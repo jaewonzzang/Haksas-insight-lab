@@ -1,0 +1,10 @@
+"""(구)/(대체과목) 별칭 추출 → course_aliases 행.
+
+패턴:
+- '(구)XXX' / '(구) XXX' / '구) XXX'
+- 'XXX 대체과목' / 'XXX(YYY)의 대체과목'
+
+의미: old_* 이수 → new_course_id 이수로 간주 (단방향).
+"""
+
+# TODO: extract(description_raw: str, course_id: str) -> list[AliasRow]

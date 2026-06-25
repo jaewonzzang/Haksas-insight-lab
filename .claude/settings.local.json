@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mv backend/app/api/routes/analyze.py backend/app/api/analyze.py)",
+      "Bash(mv backend/app/api/routes/courses.py backend/app/api/courses.py)",
+      "Bash(mv backend/app/api/routes/health.py backend/app/api/health.py)",
+      "Bash(rm -rf backend/app/api/routes)",
+      "Bash(rm -f backend/app/db/models.py)",
+      "Bash(cat)",
+      "Bash(ls -la .gitignore)",
+      "Bash(cat .gitignore)",
+      "Bash(ls -la backend/data/raw/ backend/data/processed/ backend/data/external/ backend/data/mock/)",
+      "Bash(find . -name \"*.db\" -not -path \"./.git/*\")",
+      "Bash(find . -iname \"*.xls*\" -not -path \"./.git/*\" -not -path \"*/node_modules/*\")",
+      "Read(//c/Users/김재원/Desktop/**)",
+      "Read(//c/Users/김재원/Downloads/**)",
+      "Bash(C:/Users/김재원/AppData/Local/Programs/Python/Python313/python.exe *)",
+      "Bash(iconv -f UTF-8 -t UTF-8)",
+      "Bash(/c/pypy3.11/python.exe -c \"import pandas, lxml; print\\('pandas', pandas.__version__\\); print\\('lxml', lxml.__version__\\)\")",
+      "Bash(cp C:/Users/김재원/Desktop/syllabus_pasrer/개설교과목정보.xls /tmp/scompass_inspect.xls)",
+      "Read(//tmp/**)",
+      "Bash(cp alias_parser.py alias_parser.py.bak)",
+      "Bash(cp prereq_parser.py prereq_parser.py.bak)",
+      "Bash(cp restriction_parser.py restriction_parser.py.bak)",
+      "Bash(mkdir -p ../../tests/unit/parsers)",
+      "Read(//c/Users/김재원/tests/unit/**)",
+      "Bash(/c/pypy3.11/python.exe -m pytest --version)",
+      "Bash(xxd)",
+      "Bash(python *)",
+      "Bash(uv run *)",
+      "Bash(wc -l)",
+      "Bash(echo 'lines: __CMDSUB_OUTPUT__')",
+      "Bash(echo \"=== tag/section landmarks ===\")",
+      "Bash(grep -nE '<\\(script|style|section|main|header|template\\)|id=|class=\"\\(screen|page|card|modal|popup\\)' frontend/legacy/mockup.html)",
+      "Skill(claude-api)",
+      "Bash(gh --version)",
+      "Bash(gh auth *)"
+    ]
+  }
+}

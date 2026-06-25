@@ -1,0 +1,9 @@
+"""parsers/prereq_parser + core/prereq_eval 통합.
+
+대상 케이스 (확장 예정):
+- 단순 AND: "ECO2001, ECO2003"
+- OR 그룹: "ECO2003(또는 STS2005 또는 STS2006)"
+- 중첩 혼합: "ECO2001, ECO2003(또는 STS2005 또는 STS2006)"
+"""
+
+# TODO

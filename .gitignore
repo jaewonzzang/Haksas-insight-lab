@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# uv
+.venv/
+.uv_cache/
+
+# Node / Vite
+node_modules/
+dist/
+.vite/
+
+# 환경변수 (.env.example 은 커밋)
+.env
+.env.local
+.env.*.local
+
+# 데이터 (구조만 .gitkeep 으로 유지)
+backend/data/raw/*
+backend/data/processed/*
+backend/data/external/*
+!backend/data/raw/.gitkeep
+!backend/data/processed/.gitkeep
+!backend/data/external/.gitkeep
+
+# Notebooks 산출물 (체크포인트 등)
+.ipynb_checkpoints/
+
+# OS / 에디터
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# 로그
+*.log

@@ -1,0 +1,10 @@
+"""선수과목 raw → AND/OR 트리.
+
+파싱 규칙 (CLAUDE.md 기준):
+- 콤마 ',' = AND
+- '또는' / 'or' = OR
+- 괄호 '(...)' = OR 그룹 경계
+- 과목코드 정규식: [A-Z]{2,5}\d{3,4}[A-Z]?
+"""
+
+# TODO: parse(prereq_raw: str) -> dict  (AND/OR 중첩 dict)

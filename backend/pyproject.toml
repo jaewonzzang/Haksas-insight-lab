@@ -1,0 +1,33 @@
+[project]
+name = "s-compass-backend"
+version = "0.1.0"
+description = "S-Compass — 학사 데이터 기반 학생 맞춤 학업 분석 백엔드"
+requires-python = ">=3.11"
+dependencies = [
+    # API
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic",
+    # 1단계 빌드 (xls 파싱)
+    "pandas",
+    "lxml",        # pd.read_html 백엔드
+    "openpyxl",    # 예비
+    # ML / 추천 / 임베딩 — 채택 알고리즘 확정 시 좁힐 것
+    "scikit-learn",
+    "numpy",
+    # LLM 공급자 — 실제 사용 시 활성화. 일부는 OPEN_QUESTIONS 확정 후.
+    # "anthropic",
+    # "openai",
+    # 벡터 인덱스 — A3 확정 후
+    # "chromadb",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "ruff",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,3 @@
+"""parsers/restriction_parser. 4가지 정형 패턴 매핑 (allowed/forbidden/major_only_*)."""
+
+# TODO
