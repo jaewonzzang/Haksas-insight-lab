@@ -58,10 +58,10 @@
   }
   .header-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
   .brand-logo {
-    height: 50px;
     width: 158px;
+    height: auto;
     flex-shrink: 0;
-    object-fit: fill;
+    object-fit: contain;
   }
   .title-divider {
     width: 1px;
