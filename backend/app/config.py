@@ -13,3 +13,6 @@ PROCESSED_DIR: Path = DATA_DIR / "processed"
 EXTERNAL_DIR: Path = DATA_DIR / "external"
 MOCK_DIR: Path = DATA_DIR / "mock"
 DB_PATH: Path = PROCESSED_DIR / "s_compass_courses.db"
+# 졸업생 데이터 공급자 선택 — 실데이터 수령 후 "real" 로 전환 (스펙 §5)
+ALUMNI_SOURCE: str = "mock"          # "mock" | "real"
+ALUMNI_MOCK_PATH: Path = MOCK_DIR / "alumni.json"
