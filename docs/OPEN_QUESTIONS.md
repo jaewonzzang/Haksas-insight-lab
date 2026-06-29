@@ -13,10 +13,9 @@
 
 ## 미결정 — 본격 구현 전에 정해야 함
 
-### A1. mock 졸업생 데이터 스키마
-- **무엇이 필요한가**: 학사팀 실데이터를 본 적 없음. 어떤 필드(학번 해시? 학과? 학기별 이수 시퀀스? 평점? 졸업 후 진로 라벨?)가 들어오는지 불명.
-- **블로커 영향**: 카드 C/D 엔진 시그니처, `adapters/mock_alumni.py` 구현, `engines/career/embedding.py` 입력 표현 전부 여기에 의존.
-- **다음 액션**: 학사지원팀과 협의 → 잠정 스키마 확정 → mock 생성기 작성.
+### A1. 졸업생 데이터 실 컬럼 매핑 (잔여)
+- **부분 결정**: 잠정 프레임 확정 — `app/adapters/alumni_types.AlumniRecord` (코어 `alumni_id`+`department`, 나머지 Optional). 스펙: `superpowers/specs/2026-06-29-alumni-data-frame-design.md`.
+- **잔여**: 학사팀 실데이터 실 컬럼 → `AlumniRecord` 매핑. `adapters/real_alumni.py` 한 곳에서 수령 후 작성. 프레임은 입력 데이터에 따라 비파괴적으로 수정될 수 있음.
 
 ### A2. 카드 A 응답 구조
 - 한 응답에 `{major:[], general:[]}` 통합 vs 카드 두 개 분리 응답.

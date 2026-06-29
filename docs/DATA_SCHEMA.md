@@ -81,5 +81,10 @@
 
 ## 졸업생 데이터 (별도)
 
-본선 진출 후 학사지원팀에서 수령. 스키마 미확정 → `OPEN_QUESTIONS.md` A1 참조.
-어댑터 인터페이스만 `app/adapters/alumni_source.py`에 잠정 정의.
+본선 진출 후 학사지원팀에서 수령. 실 컬럼 미확정 → 카드 C/D 소비측에서 역산한 **잠정 내부 프레임** `app/adapters/alumni_types.AlumniRecord` 로 표현 (API 계약 아님).
+
+- 코어 필수: `alumni_id`, `department`. 나머지(`majors`, `enrollment`, `career`)는 전부 Optional → 부분 데이터에도 후퇴 동작.
+- mock 산출: `scripts/generate_mock_alumni.py` → `data/mock/alumni.json`.
+- 실데이터 매핑/스위치: `adapters/real_alumni.py` + `config.ALUMNI_SOURCE` (스펙 §5).
+
+상세: `superpowers/specs/2026-06-29-alumni-data-frame-design.md`, 미결정 잔여는 `OPEN_QUESTIONS.md` A1.
