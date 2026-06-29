@@ -26,9 +26,11 @@ dist/
 backend/data/raw/*
 backend/data/processed/*
 backend/data/external/*
+backend/data/mock/*
 !backend/data/raw/.gitkeep
 !backend/data/processed/.gitkeep
 !backend/data/external/.gitkeep
+!backend/data/mock/.gitkeep
 
 # Notebooks 산출물 (체크포인트 등)
 .ipynb_checkpoints/
@@ -42,3 +44,6 @@ Thumbs.db
 
 # 로그
 *.log
+
+# SDD 진행 원장 (스크래치)
+.superpowers/
