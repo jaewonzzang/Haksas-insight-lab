@@ -46,6 +46,18 @@ def test_prereq_fully_met_no_penalty():
     assert prereq.kind == "pos"
 
 
+def test_prereq_zero_yields_max_penalty():
+    # 스펙 §6: prereq_fulfillment=0 → 감산 = PREREQ_PENALTY_MAX(40)
+    s = {label: 80 for label in ALL_SIX}
+    r = score_candidate(s, 0)  # penalty = round(40 * (1 - 0)) = 40
+    assert r.score_percent == 40  # 80 - 40
+    assert r.grade == "유보"
+    prereq = next(f for f in r.factors if f.label == "선이수 충족도")
+    assert prereq.contribution == "−40"  # U+2212
+    assert prereq.kind == "neg"
+    assert prereq.weight_percent == 0
+
+
 def test_all_none_yields_zero_yubo():
     s = {label: None for label in ALL_SIX}
     r = score_candidate(s, None)
