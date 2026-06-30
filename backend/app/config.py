@@ -4,9 +4,13 @@
 실제 Settings 로딩(Pydantic Settings 등) 도입 여부는 OPEN_QUESTIONS 참조.
 """
 
+import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 BASE_DIR: Path = Path(__file__).resolve().parents[1]
+load_dotenv(BASE_DIR / ".env")
 DATA_DIR: Path = BASE_DIR / "data"
 RAW_DIR: Path = DATA_DIR / "raw"
 PROCESSED_DIR: Path = DATA_DIR / "processed"
@@ -16,3 +20,7 @@ DB_PATH: Path = PROCESSED_DIR / "s_compass_courses.db"
 # 졸업생 데이터 공급자 선택 — 실데이터 수령 후 "real" 로 전환 (스펙 §5)
 ALUMNI_SOURCE: str = "mock"          # "mock" | "real"
 ALUMNI_MOCK_PATH: Path = MOCK_DIR / "alumni.json"
+
+# LLM 공급자 키 (.env 에서 로드, git 제외). 미설정 시 빈 문자열.
+ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
+OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
