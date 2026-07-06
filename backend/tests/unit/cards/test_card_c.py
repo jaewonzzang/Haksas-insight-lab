@@ -1,0 +1,66 @@
+"""card_c — 코호트 필터·라벨·기타 묶음·표기 규칙."""
+
+from app.adapters.alumni_types import AlumniRecord, Major
+from app.cards import card_c
+from app.schemas.input import StudentInput
+
+
+def _alum(aid, dept, extras):
+    majors = [Major(label=dept, role="primary", credits=70.0)]
+    for i, label in enumerate(extras):
+        majors.append(Major(label=label, role=("double", "triple")[i], credits=40.0))
+    return AlumniRecord(alumni_id=aid, department=dept, majors=majors)
+
+
+STUDENT = StudentInput(student_id="S1", department="지식융합미디어학부")
+
+# 코호트(합집합 매칭) 6명: 단일 3, 컴퓨터공학 2, 경영학 1 / 비코호트 1명
+ALUMNI = (
+    [_alum(f"s{i}", "아트&테크놀로지학과", []) for i in range(3)]
+    + [_alum(f"c{i}", "신문방송학과", ["컴퓨터공학"]) for i in range(2)]
+    + [_alum("b1", "미디어&엔터테인먼트학과", ["경영학"])]
+    + [_alum("x1", "화학과", ["심리학"])]  # 코호트 밖 — 제외돼야 함
+)
+
+
+def test_cohort_filter_and_entries():
+    card = card_c.build(STUDENT, ALUMNI)
+    assert card.cohort_label == "지식융합미디어학부 · 졸업생 6명"
+    top = card.entries[0]
+    assert top.label == "단일전공 유지"
+    assert top.tag == "최다"
+    assert top.count == 3
+    assert top.share_percent == 50
+    assert top.bar_percent == 100
+    assert "평균 이수 학점" in top.detail_label
+    second = card.entries[1]
+    assert second.label == "컴퓨터공학 (다전공)"
+    assert second.tag is None
+    assert "평균 추가 이수 학점" in second.detail_label
+    assert card.baseline_note.startswith("추가전공은")
+
+
+def test_fallback_to_all_when_no_cohort():
+    student = StudentInput(student_id="S2", department="화학과")
+    card = card_c.build(student, ALUMNI[:1])  # 아트&테크만 → 화학과 코호트 없음
+    assert card.cohort_label == "전체 졸업생 1명"
+
+
+def test_other_bucket_dim():
+    alumni = ALUMNI[:6] + [
+        _alum("e1", "신문방송학과", ["심리학"]),
+        _alum("e2", "신문방송학과", ["데이터사이언스"]),
+    ]
+    card = card_c.build(STUDENT, alumni)
+    other = card.entries[-1]
+    assert other.dim is True
+    # 실측: 그룹 5종(단일3·컴공2·경영1·데사1·심리1) → 동수(1) 사전순으로
+    # 상위 4위 = 단일·컴공·경영학·데이터사이언스, rest = [심리학] 1그룹.
+    assert other.label == "기타 경로 1건"
+    assert other.count == 1
+    assert other.credits.major1 is None
+
+
+def test_empty_alumni():
+    card = card_c.build(STUDENT, [])
+    assert card.entries == []

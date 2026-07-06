@@ -287,7 +287,7 @@ BASELINE_NOTE = (
 )
 ```
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/cards/test_card_c.py`:
 
@@ -359,9 +359,9 @@ def test_empty_alumni():
 
 주의: `test_other_bucket_dim`은 그룹 5종(단일3·컴공2·경영1·심리1·데사1) → 상위 4개 + 기타 1건이 아니라, 동수(1) 그룹의 사전순 정렬로 상위 4번째가 결정된다. 구현 후 실제 산출로 기타 묶음 count를 확인하고 assert(`기타 경로 N건`)를 실측값으로 맞출 것 — 정렬 규칙(count desc, extra_majors 사전순)은 완화 금지.
 
-- [ ] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/cards/test_card_c.py -v` / Expected: FAIL.
+- [x] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/cards/test_card_c.py -v` / Expected: FAIL.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `card_c.py`:
 
@@ -453,9 +453,9 @@ def build(student: StudentInput, alumni: list[AlumniRecord]) -> CardC:
     return CardC(cohort_label=label, entries=entries, baseline_note=BASELINE_NOTE)
 ```
 
-- [ ] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/cards/test_card_c.py -v` / Expected: 4 PASS.
+- [x] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/cards/test_card_c.py -v` / Expected: 4 PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/cards/card_c.py tests/unit/cards/test_card_c.py
