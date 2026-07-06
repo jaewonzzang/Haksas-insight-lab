@@ -4,7 +4,7 @@
 
 대상 DB: `backend/data/processed/s_compass_courses.db` (SQLite, 빌드 스크립트로만 갱신).
 
-## 5테이블 요약
+## 6테이블 요약
 
 ### `courses` — 과목 마스터 (약 903행)
 | 컬럼 | 타입 | 비고 |
@@ -18,6 +18,20 @@
 | `is_general` | INTEGER NN | 학과=='전인교육원' → 1, 아니면 0 |
 | `description_raw` | TEXT | 과목 설명 원문 |
 | `restrictions_raw` | TEXT | 수강신청 참조사항 원문 |
+
+### `course_offerings` — 학기별 개설 이력 (다학기 저장)
+
+`courses` 는 latest-wins 메타데이터 1행, 개설 이력은 여기에 분리. 학기별 학점/분반 변동은 추적하지 않음 (YAGNI).
+
+```sql
+CREATE TABLE course_offerings (
+    course_id  TEXT    NOT NULL,
+    year       INTEGER NOT NULL,
+    semester   INTEGER NOT NULL CHECK (semester IN (1, 2)),
+    PRIMARY KEY (course_id, year, semester),
+    FOREIGN KEY (course_id) REFERENCES courses(course_id)
+);
+```
 
 ### `course_prerequisites` — AND/OR 트리 (약 50행)
 | 컬럼 | 타입 | 비고 |
@@ -74,6 +88,7 @@
 ## 인덱스
 
 - `idx_courses_dept` on `courses(department)`
+- `idx_offerings_year_sem` on `course_offerings(year, semester)`
 - `idx_aliases_new` on `course_aliases(new_course_id)`
 - `idx_aliases_old` on `course_aliases(old_course_id)`
 - `idx_restrictions_course` on `course_restrictions(course_id)`

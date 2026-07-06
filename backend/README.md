@@ -25,15 +25,15 @@ uv run uvicorn app.main:app --reload
 # → http://localhost:8000/docs  (Swagger)
 ```
 
-## 1단계 빌드 (예정)
+## 1단계 빌드
 
-`개설교과목정보.xls` → `data/processed/s_compass_courses.db`
+`data/raw/개설교과목정보_{2024-2,2025-1,2025-2,2026-1}.csv` → `data/processed/s_compass_courses.db`
 
 ```bash
 uv run python scripts/build_course_db.py
 ```
 
-스키마는 `app/db/schema.sql` 단일 정의 (5테이블 + 인덱스).
+스키마는 `app/db/schema.sql` 단일 정의 (6테이블 + 인덱스).
 
 ## 테스트 (예정)
 

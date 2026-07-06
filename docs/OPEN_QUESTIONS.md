@@ -10,6 +10,7 @@
 - **카드 구성** → A (추천 과목, 가로 2칸), C (다전공 경로), D (유사 졸업생 진로). 카드 B 제거.
 - **학과명 정규화** → 원문 보존, 추천 풀 산출 시점에 합집합 적용.
 - **수강 제한 패턴** → 4가지 정형 (`allowed`, `forbidden`, `major_only_allowed`, `major_only_forbidden`). 비정형 0건.
+- **다학기 저장** → course_offerings 테이블 신설 (courses 는 latest-wins 1행, 개설 이력 분리). 6테이블.
 
 ## 미결정 — 본격 구현 전에 정해야 함
 

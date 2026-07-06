@@ -65,9 +65,10 @@ restriction_filter (차단: forbidden / major_only_forbidden)
 
 ## 1단계 산출물 스키마
 
-5테이블 (DDL은 `backend/app/db/schema.sql` 단일 정의):
+6테이블 (DDL은 `backend/app/db/schema.sql` 단일 정의):
 
 - `courses` — 과목 마스터 (~903행)
+- `course_offerings` — 학기별 개설 이력
 - `course_prerequisites` — AND/OR 트리 JSON (~50행)
 - `course_aliases` — 옛 코드/대체과목 별칭 (~100행 예상)
 - `course_restrictions` — 학과별 수강 제한 (~400행 예상, 4가지 정형 패턴)
