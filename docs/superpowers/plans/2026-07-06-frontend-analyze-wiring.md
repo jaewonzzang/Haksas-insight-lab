@@ -91,7 +91,7 @@ git commit -m "feat(front): 입력 폼 값(관심 진로·다전공)을 Analysis
 - Consumes: `AnalysisForm`(F1), `DemoProfile`(mock/profiles.fixture — `id`, `takenCourses`, `dashboard.profile.department`), `StudentInput`(types/api.ts).
 - Produces: `analyze(input: StudentInput, mockOverride?: DashboardResponse)`, `buildStudentInput(profile: DemoProfile, form: AnalysisForm): StudentInput`, `useAnalysis().run(form: AnalysisForm)`.
 
-- [ ] **Step 1: api.analyze에 mockOverride 추가**
+- [x] **Step 1: api.analyze에 mockOverride 추가**
 
 `api.ts`의 `analyze` 교체 (mock 경로가 프로필별 대시보드를 유지하기 위한 주입점):
 
@@ -116,7 +116,7 @@ export async function analyze(
 }
 ```
 
-- [ ] **Step 2: useAnalysis 배선**
+- [x] **Step 2: useAnalysis 배선**
 
 `useAnalysis.ts`를 다음 형태로 변경 (파일 상단 주석의 "실제 백엔드 연동은 추후" 문구를 현행화):
 
@@ -186,14 +186,14 @@ export function useAnalysis(): UseAnalysis {
 
 (기존 `setTimeout` 1200ms는 api.ts mock 경로에 이미 있으므로 훅에서 제거.)
 
-- [ ] **Step 3: 빌드 + mock 동작 확인**
+- [x] **Step 3: 빌드 + mock 동작 확인**
 
 Run: `npm run build`
 Expected: exit 0.
 
 Run: `npm run dev` 기동 → 컴파일 에러 없음 확인 후 종료 (UI 클릭 검증은 사용자 몫으로 완료 보고에 명시).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/lib/api.ts src/lib/useAnalysis.ts

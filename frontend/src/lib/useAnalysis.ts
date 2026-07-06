@@ -1,11 +1,12 @@
 // 화면 흐름 상태머신: 프로필 선택 → 입력 → 로딩 → 대시보드.
 // 선택한 프로필의 데이터(헤더 개인정보 포함)를 대시보드에 주입.
-// 실제 백엔드 연동(lib/api.analyze)은 추후 — 데모는 프로필별 하드코딩 데이터 사용.
+// 분석은 lib/api.analyze 경유 — mock 모드는 프로필별 대시보드를 override로 유지.
 
 import { useCallback, useState } from "react";
 
+import { analyze } from "./api";
 import type { DemoProfile } from "../mock/profiles.fixture";
-import type { DashboardResponse } from "../types/api";
+import type { DashboardResponse, StudentInput } from "../types/api";
 
 export type Phase = "profile" | "input" | "loading" | "dashboard";
 
@@ -15,11 +16,22 @@ export interface AnalysisForm {
   consider_multimajor: boolean;
 }
 
+// 데모 프로필 + 입력 폼 → POST /analyze 요청 본문.
+export function buildStudentInput(profile: DemoProfile, form: AnalysisForm): StudentInput {
+  return {
+    student_id: profile.id,
+    department: profile.dashboard.profile.department,
+    taken_course_ids: profile.takenCourses.map((c) => c.id),
+    interest_career: form.interest_career,
+    consider_multimajor: form.consider_multimajor,
+  };
+}
+
 export interface UseAnalysis {
   phase: Phase;
   data: DashboardResponse | null;
   selectProfile: (profile: DemoProfile) => void;
-  run: () => Promise<void>;
+  run: (form: AnalysisForm) => Promise<void>;
   reset: () => void;
 }
 
@@ -33,13 +45,16 @@ export function useAnalysis(): UseAnalysis {
     setPhase("input");
   }, []);
 
-  const run = useCallback(async () => {
-    if (!selected) return;
-    setPhase("loading");
-    await new Promise((resolve) => setTimeout(resolve, 1200)); // 로딩 화면 노출용
-    setData(selected.dashboard);
-    setPhase("dashboard");
-  }, [selected]);
+  const run = useCallback(
+    async (form: AnalysisForm) => {
+      if (!selected) return;
+      setPhase("loading");
+      const result = await analyze(buildStudentInput(selected, form), selected.dashboard);
+      setData(result);
+      setPhase("dashboard");
+    },
+    [selected],
+  );
 
   const reset = useCallback(() => {
     setPhase("profile");

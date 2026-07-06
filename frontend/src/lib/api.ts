@@ -12,10 +12,13 @@ const USE_MOCK = import.meta.env.VITE_USE_MOCK
   ? import.meta.env.VITE_USE_MOCK === "true"
   : import.meta.env.DEV;
 
-export async function analyze(input: StudentInput): Promise<DashboardResponse> {
+export async function analyze(
+  input: StudentInput,
+  mockOverride?: DashboardResponse,
+): Promise<DashboardResponse> {
   if (USE_MOCK) {
     await new Promise((resolve) => setTimeout(resolve, 1200)); // 로딩 화면 노출용
-    return mockDashboard;
+    return mockOverride ?? mockDashboard;
   }
   const res = await fetch(`${BASE_URL}/analyze`, {
     method: "POST",
