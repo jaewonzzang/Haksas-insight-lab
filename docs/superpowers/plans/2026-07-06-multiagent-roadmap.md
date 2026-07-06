@@ -29,8 +29,8 @@
 | **W1-B** ✅ 완료 (2026-07-06) | backend | course DB 빌드: `course_offerings` 스키마, `course_loader`(CSV), `prereq_parser`, `build_course_db`, 통합 테스트 — courses 1,807 / offerings 3,312 | 없음 (스펙 완료) | `2026-07-06-backend-course-db-build.md` |
 | **W1-F** ✅ 완료 (2026-07-06) | frontend | 입력 폼 → `StudentInput` 배선, `api.analyze` 경유(mock 토글 유지), 에러 화면 | 없음 | `2026-07-06-frontend-analyze-wiring.md` |
 | **W2** ✅ 완료 (2026-07-06) | backend | 계약 미러(`schemas/cards.py` ← `types/api.ts`, 불일치 0건) + `db/connection`+`queries` + `core/{prereq_eval, alias_resolver, dept_normalizer}` — 테스트 84 passed | W1-B (DB 존재) | `2026-07-06-backend-contract-queries-core.md` |
-| **W3** (진행) | backend | recommender 5모듈(content/collab/hybrid/prereq_filter/restriction_filter — 기존 scoring·weights 결합) + `cards/card_a` + factors/why_summary 채움 (교양 후보 A6 미결 → `is_general=1` 풀, `area_label=null`) | W2 | `2026-07-06-backend-recommender-card-a.md` |
-| **W4** | backend | `engines/pathway` + `engines/career`(mock alumni) + `cards/card_c`·`card_d` | W2 (W3와 부분 병행 가능) | 〃 |
+| **W3** ✅ 완료 (2026-07-06) | backend | recommender 5모듈 + `cards/card_a` — 테스트 103 passed, 실 DB 스모크(전공4/교양4/후보20, 결정론) 통과 | W2 | `2026-07-06-backend-recommender-card-a.md` |
+| **W4** (진행) | backend | mock 생성기 현실화(학과명 DB 원문·편향 샘플링) + `engines/pathway` + `engines/career`(TF-IDF·K-Means) + `cards/card_c`·`card_d`(+ClusterEvidence) | W3 | `2026-07-06-backend-pathway-career-cards.md` |
 | **W5** | backend | `llm/translator` + `prompts` + `providers/anthropic` (통역 1~2문장, 실패 시 결정론 문구 폴백) | W3·W4 | 〃 |
 | **W6** | backend + frontend | `api/analyze` 배선(+CORS), `api/courses` 디버그, 프론트 `VITE_USE_MOCK=false` E2E 검증, `docs/API_SPEC.md` 최종화 | W1~W5 | 〃 |
 | **W7** (실데이터 수령 후) | backend | `adapters/real_alumni` 매핑(A1), 가중치·컷오프 튜닝(A5), 시연 학과 범위(A4) | 학사팀 데이터 | 〃 |
