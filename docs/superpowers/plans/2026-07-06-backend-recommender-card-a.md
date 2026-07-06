@@ -100,7 +100,7 @@ git commit -m "feat: 과목 id 조회 + 학기별 개설 이력 쿼리 추가"
 - Consumes: 과목 행(Mapping — `course_id`/`course_name`/`description_raw` 키 접근, sqlite3.Row·dict 모두 가능).
 - Produces: `score(taken_rows, pool_rows) -> dict[course_id, float]` — 0~100 "콘텐츠 유사도" signal. 산출 불가(이수 없음/텍스트 없음)면 `{}` (→ 해당 signal 결측, `scoring`이 N/A 처리).
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/engines/test_content_based.py`:
 
@@ -142,9 +142,9 @@ def test_no_text_returns_empty():
     assert content_based.score(taken, pool) == {}
 ```
 
-- [ ] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines -v` / Expected: FAIL.
+- [x] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines -v` / Expected: FAIL.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `content_based.py` (기존 docstring 현행화):
 
@@ -184,9 +184,9 @@ def score(
     }
 ```
 
-- [ ] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines -v` / Expected: 4 PASS.
+- [x] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines -v` / Expected: 4 PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/engines/recommender/content_based.py tests/unit/engines
