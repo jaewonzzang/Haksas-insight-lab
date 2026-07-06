@@ -17,6 +17,26 @@ def list_by_department(
     ).fetchall()
 
 
+def list_by_ids(
+    con: sqlite3.Connection, course_ids: Sequence[str]
+) -> list[sqlite3.Row]:
+    if not course_ids:
+        return []
+    marks = ", ".join("?" for _ in course_ids)
+    return con.execute(
+        f"SELECT * FROM courses WHERE course_id IN ({marks})", tuple(course_ids)
+    ).fetchall()
+
+
+def offered_in_semester(con: sqlite3.Connection, semester: int) -> set[str]:
+    """해당 학기(1|2)에 개설 이력이 있는 course_id 집합 (연도 무관)."""
+    rows = con.execute(
+        "SELECT DISTINCT course_id FROM course_offerings WHERE semester = ?",
+        (semester,),
+    ).fetchall()
+    return {r["course_id"] for r in rows}
+
+
 def get_course(con: sqlite3.Connection, course_id: str) -> Optional[sqlite3.Row]:
     return con.execute(
         "SELECT * FROM courses WHERE course_id = ?", (course_id,)

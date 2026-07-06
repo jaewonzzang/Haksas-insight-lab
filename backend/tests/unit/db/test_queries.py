@@ -27,6 +27,10 @@ def con():
             ("AAT2001", "크리에이티브컴퓨팅", "아트&테크놀로지학과", 3.0),
         ],
     )
+    con.executemany(
+        "INSERT INTO course_offerings (course_id, year, semester) VALUES (?, ?, ?)",
+        [("CSE1010", 2025, 2), ("CSE1010", 2026, 1), ("CSE2020", 2026, 1)],
+    )
     con.execute(
         "INSERT INTO course_prerequisites (course_id, prereq_raw, prereq_tree_json) "
         'VALUES (\'CSE2020\', \'선수과목: CSE1010\', \'{"type": "course", "code": "CSE1010"}\')'
@@ -77,6 +81,17 @@ def test_list_restrictions_for(con):
 def test_list_aliases(con):
     rows = course_queries.list_aliases(con)
     assert [tuple(r) for r in rows] == [("CS101", "컴퓨터입문", "CSE1010")]
+
+
+def test_list_by_ids(con):
+    rows = course_queries.list_by_ids(con, ["CSE1010", "NOPE999"])
+    assert [r["course_id"] for r in rows] == ["CSE1010"]
+    assert course_queries.list_by_ids(con, []) == []
+
+
+def test_offered_in_semester(con):
+    assert course_queries.offered_in_semester(con, 2) == {"CSE1010"}
+    assert course_queries.offered_in_semester(con, 1) == {"CSE1010", "CSE2020"}
 
 
 def test_get_prereq_tree(con):

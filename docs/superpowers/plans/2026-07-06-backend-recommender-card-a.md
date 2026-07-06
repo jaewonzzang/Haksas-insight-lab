@@ -29,7 +29,7 @@
 **Interfaces:**
 - Produces: `list_by_ids(con, course_ids: Sequence[str]) -> list[sqlite3.Row]`, `offered_in_semester(con, semester: int) -> set[str]` — Task 7 `card_a`가 소비.
 
-- [ ] **Step 1: 실패하는 테스트 추가**
+- [x] **Step 1: 실패하는 테스트 추가**
 
 `tests/unit/db/test_queries.py`의 기존 `con` fixture에 offerings INSERT를 추가:
 
@@ -54,9 +54,9 @@ def test_offered_in_semester(con):
     assert course_queries.offered_in_semester(con, 1) == {"CSE1010", "CSE2020"}
 ```
 
-- [ ] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/db -v` / Expected: 신규 2개 FAIL (AttributeError).
+- [x] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/db -v` / Expected: 신규 2개 FAIL (AttributeError).
 
-- [ ] **Step 3: 구현** — `course_queries.py`에 추가:
+- [x] **Step 3: 구현** — `course_queries.py`에 추가:
 
 ```python
 def list_by_ids(
@@ -79,9 +79,9 @@ def offered_in_semester(con: sqlite3.Connection, semester: int) -> set[str]:
     return {r["course_id"] for r in rows}
 ```
 
-- [ ] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/db -v` / Expected: 전부 PASS.
+- [x] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/db -v` / Expected: 전부 PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/db/queries/course_queries.py tests/unit/db/test_queries.py
