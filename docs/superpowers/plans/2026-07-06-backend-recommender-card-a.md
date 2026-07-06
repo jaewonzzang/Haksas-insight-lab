@@ -567,7 +567,7 @@ git commit -m "feat: restriction_filter forbidden 계열 차단"
 - Consumes: Task 1~6 전부 + `expand_taken`/`candidate_departments`(W2 core) + `CardA`/`RecommendedCourse`/`RecommendationFactor`(W2 schemas) + `StudentInput` + `AlumniRecord`.
 - Produces: `build(student: StudentInput, con: sqlite3.Connection, alumni: list[AlumniRecord]) -> CardA` — W6 `/analyze`가 소비.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/cards/test_card_a.py` — in-memory DB로 전 파이프라인 검증:
 
@@ -713,14 +713,14 @@ def test_smoke_knowledge_convergence_media(con, alumni):
     assert all(0 <= c.score_percent <= 100 for c in card.candidates)
 ```
 
-- [ ] **Step 2: mock 졸업생 산출물 확인/생성**
+- [x] **Step 2: mock 졸업생 산출물 확인/생성**
 
 Run: `uv run python -c "from app import config; print(config.ALUMNI_MOCK_PATH.exists())"`
 False 면: `uv run python scripts/generate_mock_alumni.py` (빌드된 DB에서 course_id 샘플).
 
-- [ ] **Step 3: 실패 확인** — Run: `uv run pytest tests/unit/cards tests/integration/test_card_a_real_db.py -v` / Expected: FAIL (card_a.build 미구현).
+- [x] **Step 3: 실패 확인** — Run: `uv run pytest tests/unit/cards tests/integration/test_card_a_real_db.py -v` / Expected: FAIL (card_a.build 미구현).
 
-- [ ] **Step 4: 구현**
+- [x] **Step 4: 구현**
 
 `app/cards/card_a.py`:
 
@@ -843,12 +843,12 @@ def _fallback_reason(sc: ScoredCandidate) -> str:
     return f"{top.label} 신호가 가장 강한 과목"
 ```
 
-- [ ] **Step 5: 통과 + 전체 회귀**
+- [x] **Step 5: 통과 + 전체 회귀**
 
 Run: `uv run pytest tests/unit tests/integration -q`
 Expected: 실패 0 (기존 84 + 신규 ~16).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add app/cards/card_a.py tests/unit/cards tests/integration/test_card_a_real_db.py

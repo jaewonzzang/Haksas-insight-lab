@@ -1,11 +1,116 @@
-"""카드 A 오케스트레이션: 추천 과목 (전공/교양 2단).
+"""카드 A 오케스트레이터: 풀 구성 → 신호 → 결합 → 차단 → CardA.
 
-흐름:
-1) 후보 풀 = dept_normalizer로 학생 학과의 합집합 → db/queries/course_queries
-2) engines/recommender 점수 계산
-3) prereq_eval로 충족도 평가 → 강추/고려/유보 등급
-4) llm/translator로 1줄 사유 통역
-5) schemas/cards.CardA 응답으로 직렬화
+reason_short/why_summary 는 W5(llm/translator) 도입 전까지 결정론 폴백.
 """
 
-# TODO: build(student_input) -> CardA
+import sqlite3
+
+from app.adapters.alumni_types import AlumniRecord
+from app.core.alias_resolver import expand_taken
+from app.core.dept_normalizer import candidate_departments
+from app.db.queries import course_queries, prereq_queries
+from app.engines.recommender import (
+    collaborative,
+    content_based,
+    hybrid,
+    prereq_filter,
+    restriction_filter,
+)
+from app.engines.recommender.scoring import ScoredCandidate
+from app.schemas.cards import CardA, RecommendationFactor, RecommendedCourse
+from app.schemas.input import StudentInput
+
+TOP_N_PER_GROUP = 4
+CANDIDATES_CAP = 20
+TARGET_SEMESTER = 2  # 추천 대상 = 다음 학기 (2026-2)
+GENERAL_DEPT = "전인교육원"
+
+
+def build(
+    student: StudentInput,
+    con: sqlite3.Connection,
+    alumni: list[AlumniRecord],
+) -> CardA:
+    taken = expand_taken(
+        set(student.taken_course_ids),
+        [tuple(r) for r in course_queries.list_aliases(con)],
+    )
+    offered = course_queries.offered_in_semester(con, TARGET_SEMESTER)
+
+    def _pool(departments: list[str]) -> list[sqlite3.Row]:
+        return [
+            r
+            for r in course_queries.list_by_department(con, departments)
+            if r["course_type"] == "regular"
+            and r["course_id"] not in taken
+            and r["course_id"] in offered
+        ]
+
+    major_pool = _pool(candidate_departments(student.department))
+    general_pool = _pool([GENERAL_DEPT])
+    pool = major_pool + general_pool
+    pool_ids = [r["course_id"] for r in pool]
+    if not pool_ids:
+        return CardA(major=[], general=[], candidates=[])
+
+    signals_by_label: dict[str, dict[str, float]] = {}
+    taken_rows = course_queries.list_by_ids(con, sorted(taken))
+    content = content_based.score(taken_rows, pool)
+    if content:
+        signals_by_label["콘텐츠 유사도"] = content
+    collab = collaborative.score(taken, pool_ids, alumni)
+    if collab:
+        signals_by_label["코호트 선호도"] = collab
+
+    trees = {cid: prereq_queries.get_prereq_tree(con, cid) for cid in pool_ids}
+    fulfill = prereq_filter.fulfillments(taken, pool_ids, trees)
+    scored = hybrid.combine(signals_by_label, fulfill, pool_ids)
+
+    student_depts = {student.department, *candidate_departments(student.department)}
+    scored = restriction_filter.apply(
+        scored,
+        student_depts,
+        True,  # StudentInput 에 전공 구분 없음 — 데모 학생은 1전공 관점
+        course_queries.list_restrictions_for(con, pool_ids),
+    )
+
+    major_ids = {r["course_id"] for r in major_pool}
+    rows_by_id = {r["course_id"]: r for r in pool}
+    ranked = sorted(
+        (cid for cid in pool_ids if cid in scored),
+        key=lambda cid: (-scored[cid].score_percent, cid),
+    )
+    major_top = [c for c in ranked if c in major_ids][:TOP_N_PER_GROUP]
+    general_top = [c for c in ranked if c not in major_ids][:TOP_N_PER_GROUP]
+
+    def _course(cid: str) -> RecommendedCourse:
+        row, sc = rows_by_id[cid], scored[cid]
+        is_major = cid in major_ids
+        return RecommendedCourse(
+            course_id=cid,
+            course_name=row["course_name"],
+            credit=row["credit"],
+            grade=sc.grade,
+            score_percent=sc.score_percent,
+            reason_short=_fallback_reason(sc),
+            kind="major" if is_major else "free",
+            kind_label="전공" if is_major else "교양",
+            area_label=None,  # A6 미결 — 교양 영역 매핑 없음
+            factors=[RecommendationFactor(**f.model_dump()) for f in sc.factors],
+            why_summary=f"{sc.grade} · 추천도 {sc.score_percent}%",
+        )
+
+    return CardA(
+        major=[_course(c) for c in major_top],
+        general=[_course(c) for c in general_top],
+        candidates=[_course(c) for c in ranked[:CANDIDATES_CAP]],
+    )
+
+
+def _fallback_reason(sc: ScoredCandidate) -> str:
+    """W5 llm/translator 도입 전 결정론 1줄 (통역 대체)."""
+    pos = [f for f in sc.factors if f.kind == "pos"]
+    if not pos:
+        return "신호 부족 — 참고용 추천"
+    top = max(pos, key=lambda f: f.weight_percent)
+    return f"{top.label} 신호가 가장 강한 과목"
