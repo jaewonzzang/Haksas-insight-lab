@@ -1,8 +1,26 @@
-"""학과별 수강 제한 차단.
+"""수강 제한 차단: forbidden / major_only_forbidden 만 제거.
 
-course_restrictions.status:
-- forbidden, major_only_forbidden (학생이 1전공 아닐 때) → 후보에서 제외
-- allowed, major_only_allowed → 통과
+allowed / major_only_allowed 는 차단하지 않는다 (ARCHITECTURE 확정, 정보성).
+파이프라인 마지막 단계 — 점수 산출 이후 적용해 협업 신호를 보존한다.
 """
 
-# TODO: apply(scores, student_dept, is_first_major) -> dict[course_id, float]
+from typing import Iterable, Mapping
+
+from app.engines.recommender.scoring import ScoredCandidate
+
+
+def apply(
+    scored: dict[str, ScoredCandidate],
+    student_depts: set[str],
+    is_first_major: bool,
+    restrictions: Iterable[Mapping],
+) -> dict[str, ScoredCandidate]:
+    blocked: set[str] = set()
+    for row in restrictions:
+        if row["target_dept"] not in student_depts:
+            continue
+        if row["status"] == "forbidden":
+            blocked.add(row["course_id"])
+        elif row["status"] == "major_only_forbidden" and is_first_major:
+            blocked.add(row["course_id"])
+    return {cid: sc for cid, sc in scored.items() if cid not in blocked}

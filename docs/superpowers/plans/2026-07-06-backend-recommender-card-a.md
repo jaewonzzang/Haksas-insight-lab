@@ -476,7 +476,7 @@ git commit -m "feat: hybrid signal 결합 (scoring.score_candidate 위임)"
 - Consumes: `ScoredCandidate` dict(Task 5), restriction 행(Mapping — `course_id`/`target_dept`/`status`).
 - Produces: `apply(scored: dict[str, ScoredCandidate], student_depts: set[str], is_first_major: bool, restrictions) -> dict[str, ScoredCandidate]`. **차단은 `forbidden`/`major_only_forbidden`만** (ARCHITECTURE 확정 — allowed 계열은 정보성).
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/engines/test_restriction_filter.py`:
 
@@ -511,9 +511,9 @@ def test_major_only_forbidden_passes_for_non_first_major():
     assert set(out) == {"C2", "C3", "C4"}
 ```
 
-- [ ] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines/test_restriction_filter.py -v` / Expected: FAIL.
+- [x] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines/test_restriction_filter.py -v` / Expected: FAIL.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `restriction_filter.py` (기존 docstring 현행화):
 
@@ -546,9 +546,9 @@ def apply(
     return {cid: sc for cid, sc in scored.items() if cid not in blocked}
 ```
 
-- [ ] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines/test_restriction_filter.py -v` / Expected: 2 PASS.
+- [x] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines/test_restriction_filter.py -v` / Expected: 2 PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/engines/recommender/restriction_filter.py tests/unit/engines/test_restriction_filter.py
