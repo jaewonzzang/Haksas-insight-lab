@@ -635,7 +635,7 @@ git commit -m "feat: career/similarity 코사인 top-N"
 - Produces: `cluster(records: Sequence[AlumniRecord], embeddings, k: int = 3) -> list[ClusterGroup]`,
   `ClusterGroup(label: str, career_type: Literal["job","grad","other"], count: int)` — 라벨 = 클러스터 구성원 최빈 `career.label`(None → "미분류"/type None → "other"), 동일 (label, career_type) 클러스터는 병합, count 내림차순·라벨 사전순. Task 7이 소비.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/engines/test_career_cluster.py`:
 
@@ -694,9 +694,9 @@ def test_none_career_bucketed():
 
 (`test_two_clear_clusters`의 정렬: 동수(2,2)는 라벨 사전순 — "IT 취업" < "국내 대학원 (CS)".)
 
-- [ ] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines/test_career_cluster.py -v` / Expected: FAIL.
+- [x] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines/test_career_cluster.py -v` / Expected: FAIL.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `cluster.py` (docstring 현행화 — A11 확정 명시):
 
@@ -764,9 +764,9 @@ def cluster(
     return groups
 ```
 
-- [ ] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines/test_career_cluster.py -v` / Expected: 4 PASS.
+- [x] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines/test_career_cluster.py -v` / Expected: 4 PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/engines/career/cluster.py tests/unit/engines/test_career_cluster.py
