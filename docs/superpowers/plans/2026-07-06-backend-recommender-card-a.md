@@ -205,7 +205,7 @@ git commit -m "feat: content_based TF-IDF 콘텐츠 유사도 signal"
 - Consumes: `AlumniRecord`(`adapters/alumni_types` — `enrollment: list[Enrollment(course_id, ...)]`).
 - Produces: `score(taken: set[str], candidate_ids: Sequence[str], alumni: Iterable[AlumniRecord]) -> dict[course_id, float]` — 이수 집합 Jaccard 유사도로 가중한 코호트 수강 빈도(0~100). 유사 졸업생 없음(가중치 전부 0)이면 `{}`.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/engines/test_collaborative.py`:
 
@@ -247,9 +247,9 @@ def test_empty_enrollment_skipped():
     assert collaborative.score(TAKEN, ["AAT3001"], [empty]) == {}
 ```
 
-- [ ] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines/test_collaborative.py -v` / Expected: FAIL.
+- [x] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines/test_collaborative.py -v` / Expected: FAIL.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `collaborative.py` (기존 docstring 현행화):
 
@@ -290,9 +290,9 @@ def score(
     return {cid: round(w / total * 100, 1) for cid, w in weighted.items()}
 ```
 
-- [ ] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines/test_collaborative.py -v` / Expected: 3 PASS.
+- [x] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines/test_collaborative.py -v` / Expected: 3 PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/engines/recommender/collaborative.py tests/unit/engines/test_collaborative.py
