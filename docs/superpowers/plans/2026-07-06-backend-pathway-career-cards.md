@@ -1057,7 +1057,7 @@ git commit -m "feat: card_d 유사 졸업생 진로 + ClusterEvidence 결정론 
 **Interfaces:**
 - Consumes: 실 `s_compass_courses.db` + 재생성된 `data/mock/alumni.json`(Task 1) + `card_c`/`card_d`.
 
-- [ ] **Step 1: 통합 테스트 작성**
+- [x] **Step 1: 통합 테스트 작성**
 
 ```python
 """카드 C/D — 실 DB + mock 졸업생 240명 스모크. 산출물 없으면 skip."""
@@ -1122,12 +1122,12 @@ def test_card_d_smoke(student, con, alumni):
     assert a == (card, evidence)  # 결정론
 ```
 
-- [ ] **Step 2: 실행 + 전체 회귀**
+- [x] **Step 2: 실행 + 전체 회귀**
 
 Run: `uv run pytest tests/integration/test_cards_cd_real_data.py -v` — 2 PASS.
 Run: `uv run pytest tests/unit tests/integration -q` — 실패 0 (기존 103 + 신규 ~21).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add tests/integration/test_cards_cd_real_data.py
