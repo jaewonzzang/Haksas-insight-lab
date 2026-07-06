@@ -566,7 +566,7 @@ git commit -m "feat: career/embedding 과목 ID TF-IDF"
 - Consumes: Task 4의 (matrix, student_vec).
 - Produces: `top_n(student_vec, alumni_matrix, n: int) -> list[tuple[int, float]]` — (졸업생 행 인덱스, 코사인 점수) 점수 내림차순, 동점은 인덱스 오름차순(결정론). Task 7이 소비.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/engines/test_career_similarity.py`:
 
@@ -592,9 +592,9 @@ def test_n_larger_than_rows():
     assert len(similarity.top_n(student, matrix, 10)) == 1
 ```
 
-- [ ] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines/test_career_similarity.py -v` / Expected: FAIL.
+- [x] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines/test_career_similarity.py -v` / Expected: FAIL.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `similarity.py` (docstring 현행화):
 
@@ -613,9 +613,9 @@ def top_n(student_vec, alumni_matrix, n: int) -> List[Tuple[int, float]]:
     return [(int(i), float(scores[i])) for i in order[:n]]
 ```
 
-- [ ] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines/test_career_similarity.py -v` / Expected: 2 PASS.
+- [x] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines/test_career_similarity.py -v` / Expected: 2 PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/engines/career/similarity.py tests/unit/engines/test_career_similarity.py
