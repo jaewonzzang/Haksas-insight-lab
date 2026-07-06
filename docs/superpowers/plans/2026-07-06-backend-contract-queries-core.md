@@ -631,7 +631,7 @@ git commit -m "feat: prereq_eval AND/OR 트리 충족도 평가 (0~100 스케일
 - Consumes: `course_queries.list_aliases` 결과 (`(old_course_id, old_course_name, new_course_id)` 3열 Row — 시퀀스라 언패킹 가능).
 - Produces: `expand_taken(taken: set[str], aliases: Iterable[tuple[str | None, str | None, str]]) -> set[str]` — W3 추천 엔진이 이수 판정 전 호출.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/core/test_alias_resolver.py`:
 
@@ -668,12 +668,12 @@ def test_multiple_matches():
     }
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `uv run pytest tests/unit/core/test_alias_resolver.py -v`
 Expected: ImportError로 FAIL.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `app/core/alias_resolver.py` (기존 모듈 docstring 유지):
 
@@ -693,12 +693,12 @@ def expand_taken(taken: set[str], aliases: Iterable[AliasTriple]) -> set[str]:
     return expanded
 ```
 
-- [ ] **Step 4: 통과 확인**
+- [x] **Step 4: 통과 확인**
 
 Run: `uv run pytest tests/unit/core/test_alias_resolver.py -v`
 Expected: 4 PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/core/alias_resolver.py tests/unit/core/test_alias_resolver.py
