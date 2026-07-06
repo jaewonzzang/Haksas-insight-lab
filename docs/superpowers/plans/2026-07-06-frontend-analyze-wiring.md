@@ -213,7 +213,7 @@ git commit -m "feat(front): useAnalysis가 buildStudentInput + api.analyze 경�
 - Consumes: F2의 `run`.
 - Produces: `Phase`에 `"error"` 추가, `useAnalysis()`에 `error: string | null`·`backToInput: () => void` 추가, `ErrorScreen({ message, onRetry, onReset })`.
 
-- [ ] **Step 1: 훅에 error phase 추가**
+- [x] **Step 1: 훅에 error phase 추가**
 
 `useAnalysis.ts` 변경점:
 
@@ -250,7 +250,7 @@ const backToInput = useCallback(() => {
 
 `reset`에도 `setError(null)` 추가. 반환 객체에 `error`, `backToInput` 포함.
 
-- [ ] **Step 2: ErrorScreen 컴포넌트**
+- [x] **Step 2: ErrorScreen 컴포넌트**
 
 `src/components/ErrorScreen.tsx` 생성 (BrandHeader props가 `right` 필수라면 생략 가능하도록 실제 시그니처 확인 후 맞출 것):
 
@@ -288,7 +288,7 @@ export default function ErrorScreen({ message, onRetry, onReset }: Props) {
 }
 ```
 
-- [ ] **Step 3: App 배선**
+- [x] **Step 3: App 배선**
 
 `App.tsx`:
 
@@ -301,12 +301,12 @@ if (phase === "error")
   return <ErrorScreen message={error ?? "알 수 없는 오류"} onRetry={backToInput} onReset={reset} />;
 ```
 
-- [ ] **Step 4: 빌드 확인**
+- [x] **Step 4: 빌드 확인**
 
 Run: `npm run build`
 Expected: exit 0.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/components/ErrorScreen.tsx src/lib/useAnalysis.ts src/App.tsx
