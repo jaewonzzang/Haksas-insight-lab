@@ -31,11 +31,11 @@
 
 배경: 현재 `DEPARTMENTS = ["아트&테크놀로지", "컴퓨터공학과", "경영학과"]`는 DB 원문("아트&테크놀로지학과")과 불일치 → `dept_normalizer` 합집합 코호트 매칭 0명. 수강 이력도 전체 ~1,800과목 무작위 균등이라 협업 신호가 눌림 (W3 보고).
 
-- [ ] **Step 1: 기존 테스트 확인**
+- [x] **Step 1: 기존 테스트 확인**
 
 Run: `uv run pytest tests/unit/test_generate_mock_alumni.py -v` — 현재 통과 상태와 assert 내용 파악 (학과명/구조 하드코딩 여부).
 
-- [ ] **Step 2: 생성기 수정**
+- [x] **Step 2: 생성기 수정**
 
 `generate_mock_alumni.py` 변경점:
 
@@ -83,7 +83,7 @@ def _sample_term(dept_pool: list[str], general_pool: list[str], rng: random.Rand
 
 `_one_record`/`generate_records`/`main`의 시그니처와 호출을 위 구조에 맞게 최소 조정 (`pool` 단일 리스트 → `dept_pool`+`general_pool`). seed=42, n_per_dept=60 유지 → 240명.
 
-- [ ] **Step 3: 테스트 갱신·통과 + 재생성**
+- [x] **Step 3: 테스트 갱신·통과 + 재생성**
 
 기존 테스트가 구 시그니처/학과명을 참조하면 새 구조로 갱신 (검증 의도 유지).
 
@@ -91,7 +91,7 @@ Run: `uv run pytest tests/unit/test_generate_mock_alumni.py tests/unit/test_mock
 Run: `uv run python scripts/generate_mock_alumni.py` — `wrote 240 records` 확인.
 Run: `uv run pytest tests/unit tests/integration -q` — 전체 회귀 (기존 카드 A 통합 스모크 포함) 실패 0.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add scripts/generate_mock_alumni.py tests/unit/test_generate_mock_alumni.py
