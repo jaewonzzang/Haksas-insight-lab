@@ -4,9 +4,10 @@
 import { useState, type FormEvent } from "react";
 
 import BrandHeader from "./BrandHeader";
+import type { AnalysisForm } from "../lib/useAnalysis";
 
 interface Props {
-  onSubmit: () => void;
+  onSubmit: (form: AnalysisForm) => void;
   onBack: () => void;
 }
 
@@ -56,7 +57,10 @@ export default function InputScreen({ onSubmit, onBack }: Props) {
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    onSubmit();
+    onSubmit({
+      interest_career: career === "미정" ? null : career,
+      consider_multimajor: multimajor === "yes",
+    });
   }
 
   return (

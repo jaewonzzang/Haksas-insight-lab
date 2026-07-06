@@ -28,7 +28,7 @@
 **Interfaces:**
 - Produces: `AnalysisForm { interest_career: string | null; consider_multimajor: boolean }` (useAnalysis.ts에서 export). `InputScreen`의 `onSubmit: (form: AnalysisForm) => void`. F2가 소비.
 
-- [ ] **Step 1: AnalysisForm 타입 추가**
+- [x] **Step 1: AnalysisForm 타입 추가**
 
 `useAnalysis.ts` 상단(기존 `Phase` 타입 근처)에:
 
@@ -40,7 +40,7 @@ export interface AnalysisForm {
 }
 ```
 
-- [ ] **Step 2: InputScreen이 form을 넘기도록 변경**
+- [x] **Step 2: InputScreen이 form을 넘기도록 변경**
 
 `InputScreen.tsx`:
 
@@ -67,12 +67,12 @@ function handleSubmit(e: FormEvent) {
 
 (체크박스 영역들은 기존 주석대로 UI 수집용 로컬 상태 유지 — `StudentInput` 계약에 없으므로 전송하지 않는다.)
 
-- [ ] **Step 3: 빌드 확인**
+- [x] **Step 3: 빌드 확인**
 
 Run: `npm run build`
 Expected: exit 0. (`run: () => Promise<void>`는 `(form) => void` 자리에 대입 가능하므로 App.tsx 수정 없이 통과.)
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/lib/useAnalysis.ts src/components/InputScreen.tsx

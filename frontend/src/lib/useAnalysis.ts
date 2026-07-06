@@ -9,6 +9,12 @@ import type { DashboardResponse } from "../types/api";
 
 export type Phase = "profile" | "input" | "loading" | "dashboard";
 
+// 입력 화면에서 수집하는 분석 조건. StudentInput의 사용자 선택 필드에 대응.
+export interface AnalysisForm {
+  interest_career: string | null; // "미정"은 null
+  consider_multimajor: boolean;
+}
+
 export interface UseAnalysis {
   phase: Phase;
   data: DashboardResponse | null;
