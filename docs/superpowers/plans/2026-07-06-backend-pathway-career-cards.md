@@ -111,7 +111,7 @@ git commit -m "feat: mock 졸업생 학과명 DB 원문화 + 학과 편향 수�
 - Produces: `aggregate(alumni: Sequence[AlumniRecord]) -> list[PathwayGroup]`,
   `PathwayGroup(extra_majors: list[str], count: int, avg_primary_credits: float | None, avg_second_credits: float | None, avg_third_credits: float | None)` — count 내림차순, 동수는 extra_majors 사전순. Task 3 `card_c`가 소비.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/engines/test_pathway_distribution.py`:
 
@@ -172,9 +172,9 @@ def test_empty_input():
 
 (참고: 동수 그룹 정렬 — `([], 2)` vs `(["컴퓨터공학"], 2)`는 extra_majors 사전순으로 빈 리스트가 먼저.)
 
-- [ ] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines/test_pathway_distribution.py -v` / Expected: FAIL.
+- [x] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines/test_pathway_distribution.py -v` / Expected: FAIL.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `distribution.py` (기존 docstring 현행화):
 
@@ -248,9 +248,9 @@ def aggregate(alumni: Sequence[AlumniRecord]) -> list[PathwayGroup]:
     return groups
 ```
 
-- [ ] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines/test_pathway_distribution.py -v` / Expected: 3 PASS.
+- [x] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines/test_pathway_distribution.py -v` / Expected: 3 PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/engines/pathway/distribution.py tests/unit/engines/test_pathway_distribution.py
