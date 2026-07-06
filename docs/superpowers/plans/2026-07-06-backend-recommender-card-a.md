@@ -390,7 +390,7 @@ git commit -m "feat: prereq_filter 후보별 선이수 충족률 산출"
 - Consumes: `scoring.score_candidate(signals: dict[str, float | None], prereq_fulfillment: float | None) -> ScoredCandidate` (기존 구현 — 수정 금지), signal dict들(Task 2·3), 충족률(Task 4).
 - Produces: `combine(signals_by_label: dict[str, dict[str, float]], fulfillments: dict[str, float | None], candidate_ids) -> dict[str, ScoredCandidate]` — Task 6·7이 소비.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/engines/test_hybrid.py`:
 
@@ -421,9 +421,9 @@ def test_candidate_without_signals_gets_zero():
     assert out["C9"].grade == "유보"
 ```
 
-- [ ] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines/test_hybrid.py -v` / Expected: FAIL.
+- [x] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines/test_hybrid.py -v` / Expected: FAIL.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `hybrid.py` (기존 docstring 현행화):
 
@@ -455,9 +455,9 @@ def combine(
     return out
 ```
 
-- [ ] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines/test_hybrid.py -v` / Expected: 2 PASS. (`test_combine_delegates_to_scoring`의 C2=0 기대가 실제 scoring 수치와 다르면 — 유일하게 허용되는 조정: 실제 산출값으로 assert 갱신하되 근거를 보고에 기록.)
+- [x] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines/test_hybrid.py -v` / Expected: 2 PASS. (`test_combine_delegates_to_scoring`의 C2=0 기대가 실제 scoring 수치와 다르면 — 유일하게 허용되는 조정: 실제 산출값으로 assert 갱신하되 근거를 보고에 기록.)
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/engines/recommender/hybrid.py tests/unit/engines/test_hybrid.py
