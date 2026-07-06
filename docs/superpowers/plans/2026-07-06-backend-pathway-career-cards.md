@@ -473,7 +473,7 @@ git commit -m "feat: card_c 다전공 경로 분포 (코호트·기타 묶음·�
 **Interfaces:**
 - Produces: `embed_sets(alumni_course_sets: Sequence[Iterable[str]], student_courses: Iterable[str]) -> tuple[matrix, vector] | None` — TF-IDF sparse 행렬(졸업생 N행) + 학생 1행. 유효 문서 없으면 None. Task 5·7이 소비.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/engines/test_career_embedding.py`:
 
@@ -510,9 +510,9 @@ def test_empty_alumni_returns_none():
     assert embedding.embed_sets([set(), set()], {"CSE1010"}) is None
 ```
 
-- [ ] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines/test_career_embedding.py -v` / Expected: FAIL.
+- [x] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines/test_career_embedding.py -v` / Expected: FAIL.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `embedding.py` (기존 docstring 현행화 — A10 확정 명시):
 
@@ -545,9 +545,9 @@ def embed_sets(
     return matrix, student
 ```
 
-- [ ] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines/test_career_embedding.py -v` / Expected: 3 PASS.
+- [x] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines/test_career_embedding.py -v` / Expected: 3 PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/engines/career/embedding.py tests/unit/engines/test_career_embedding.py

@@ -1,7 +1,26 @@
-"""이수경로 임베딩. 졸업생/현 학생 모두 동일 공간에 투영.
+"""이수경로 임베딩: 과목 ID TF-IDF (A10 확정 — mock 단계).
 
-표현 후보: (1) 과목 ID 시퀀스 → BoW/TF-IDF, (2) 과목 설명 임베딩 평균, (3) Sentence-BERT 한국어 문장화.
-선택은 OPEN_QUESTIONS에 추가 후 결정.
+문서 = 졸업생 1명의 이수 course_id 집합을 공백 결합한 문자열.
+실데이터 수령 후 표현(설명 임베딩 등) 재검토 — OPEN_QUESTIONS A10 잔여.
 """
 
-# TODO: embed(taken_courses: list[str]) -> np.ndarray
+from typing import Iterable, Optional, Sequence, Tuple
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+
+def _doc(courses: Iterable[str]) -> str:
+    return " ".join(sorted(courses))
+
+
+def embed_sets(
+    alumni_course_sets: Sequence[Iterable[str]],
+    student_courses: Iterable[str],
+) -> Optional[Tuple[object, object]]:
+    docs = [_doc(s) for s in alumni_course_sets]
+    if not any(docs):
+        return None
+    vectorizer = TfidfVectorizer()
+    matrix = vectorizer.fit_transform(docs)
+    student = vectorizer.transform([_doc(student_courses)])
+    return matrix, student
