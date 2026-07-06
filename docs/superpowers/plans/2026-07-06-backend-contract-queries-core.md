@@ -491,7 +491,7 @@ git commit -m "feat: db 커넥션 팩토리 + course/prereq/alias 쿼리"
 - Consumes: `prereq_queries.get_prereq_tree`가 반환하는 트리 dict (leaf `{"type":"course","code":...}` / `{"type":"and"|"or","children":[...]}`).
 - Produces: `evaluate(taken: set[str], tree: dict) -> EvaluationResult`. `EvaluationResult.fulfillment`(0~100)는 W3에서 `scoring.score_candidate(signals, prereq_fulfillment)`에 그대로 입력된다. 트리가 없는 과목(W3에서 `get_prereq_tree` → None)은 evaluate를 호출하지 않고 `prereq_fulfillment=None` 처리.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/core/test_prereq_eval.py`:
 
@@ -562,12 +562,12 @@ def test_unknown_node_type():
         evaluate(set(), {"type": "xor", "children": [LEAF_A]})
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `uv run pytest tests/unit/core/test_prereq_eval.py -v`
 Expected: ImportError로 FAIL.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `app/core/prereq_eval.py` (기존 모듈 docstring 유지):
 
@@ -607,12 +607,12 @@ def _eval_node(taken: set[str], node: dict) -> tuple[float, list[str]]:
     return best, [code for _, m in results for code in m]
 ```
 
-- [ ] **Step 4: 통과 확인**
+- [x] **Step 4: 통과 확인**
 
 Run: `uv run pytest tests/unit/core/test_prereq_eval.py -v`
 Expected: 7 PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/core/prereq_eval.py tests/unit/core
