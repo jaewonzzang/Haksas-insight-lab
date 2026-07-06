@@ -717,7 +717,7 @@ git commit -m "feat: alias_resolver 이수 set 확장 (옛 코드·과목명 매
 - Produces: `candidate_departments(student_dept: str) -> list[str]` — W3 추천 풀 산출 시 `course_queries.list_by_department` 인자로 사용.
 - 합집합 학과명 4개는 빌드된 DB `courses.department` 실측으로 확인된 원문이다 (2026-07-06): `지식융합미디어대학`(14과목), `미디어&엔터테인먼트학과`(39), `아트&테크놀로지학과`(35), `신문방송학과`(43).
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/core/test_dept_normalizer.py`:
 
@@ -747,12 +747,12 @@ def test_returns_copy():
     assert "오염" not in candidate_departments("지식융합미디어학부")
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `uv run pytest tests/unit/core/test_dept_normalizer.py -v`
 Expected: ImportError로 FAIL.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `app/core/dept_normalizer.py` (기존 모듈 docstring 유지):
 
@@ -774,12 +774,12 @@ def candidate_departments(student_dept: str) -> list[str]:
     return list(DEPT_UNIONS.get(student_dept, [student_dept]))
 ```
 
-- [ ] **Step 4: 통과 + 전체 회귀**
+- [x] **Step 4: 통과 + 전체 회귀**
 
 Run: `uv run pytest tests/unit tests/integration -q`
 Expected: 실패 0 (W1 기준 61 passed + 신규 ~22개).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/core/dept_normalizer.py tests/unit/core/test_dept_normalizer.py
