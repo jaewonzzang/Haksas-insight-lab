@@ -3,6 +3,7 @@
 from app.schemas.rows import (
     AliasRow,
     CourseRow,
+    OfferingRow,
     PrereqRow,
     RestrictionRow,
     WarningRow,
@@ -11,6 +12,7 @@ from app.schemas.rows import (
 __all__ = [
     'AliasRow',
     'CourseRow',
+    'OfferingRow',
     'PrereqRow',
     'RestrictionRow',
     'WarningRow',

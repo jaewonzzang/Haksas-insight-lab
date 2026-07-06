@@ -1,7 +1,7 @@
 -- S-Compass 1단계 산출물 DDL
 -- 대상 DB: backend/data/processed/s_compass_courses.db
 -- 빌드 스크립트: scripts/build_course_db.py
--- 최종 갱신: 2026-05-20
+-- 최종 갱신: 2026-07-06
 --
 -- 결정 사항 요약:
 --   Q2  courses 에 year, semester 추가 (NOT NULL). PK 는 course_id 단독.
@@ -20,6 +20,7 @@
 --   course_aliases.condition_raw 복원 (학번/조건 원문).
 --   course_restrictions.target_dept 유지 (courses.department 와 의미 구분).
 --   is_huss 표기 (xls 원본 'HUSS과목' 정합).
+--   course_offerings 신설 (4학기 다학기 저장, 2026-07-06).
 --
 -- FK 활성화는 런타임 책임 (PRAGMA foreign_keys = ON;).
 -- parse_warnings 에는 FK 미정의
@@ -28,6 +29,7 @@
 -- ============================================================
 -- DROP (FK 의존성 역순)
 -- ============================================================
+DROP TABLE IF EXISTS course_offerings;
 DROP TABLE IF EXISTS course_restrictions;
 DROP TABLE IF EXISTS course_aliases;
 DROP TABLE IF EXISTS course_prerequisites;
@@ -66,6 +68,19 @@ CREATE TABLE courses (
     restrictions_raw       TEXT,
     remarks_raw            TEXT,
     linked_majors_parsed   TEXT
+);
+
+-- ============================================================
+-- course_offerings : 학기별 개설 여부 (최소 컬럼, 다학기 저장)
+--   courses 는 latest-wins 메타데이터 1행, 개설 이력은 여기에.
+--   학기별 학점/분반 변동은 추적하지 않음 (YAGNI).
+-- ============================================================
+CREATE TABLE course_offerings (
+    course_id  TEXT    NOT NULL,
+    year       INTEGER NOT NULL,
+    semester   INTEGER NOT NULL CHECK (semester IN (1, 2)),
+    PRIMARY KEY (course_id, year, semester),
+    FOREIGN KEY (course_id) REFERENCES courses(course_id)
 );
 
 -- ============================================================
@@ -138,6 +153,7 @@ CREATE TABLE parse_warnings (
 CREATE INDEX idx_courses_department       ON courses(department);
 CREATE INDEX idx_courses_course_type      ON courses(course_type);
 CREATE INDEX idx_courses_is_general       ON courses(is_general);
+CREATE INDEX idx_offerings_year_sem       ON course_offerings(year, semester);
 CREATE INDEX idx_restrictions_course      ON course_restrictions(course_id);
 CREATE INDEX idx_restrictions_target_dept ON course_restrictions(target_dept);
 CREATE INDEX idx_aliases_new              ON course_aliases(new_course_id);

@@ -1,4 +1,4 @@
-"""schema.sql 5테이블과 1:1 대응하는 빌드 타임 행(row) 모델.
+"""schema.sql 6테이블과 1:1 대응하는 빌드 타임 행(row) 모델.
 
 파서가 생성하는 단위. INSERT 직전 검증 역할.
 
@@ -35,6 +35,16 @@ class CourseRow(BaseModel):
     restrictions_raw: Optional[str] = None
     remarks_raw: Optional[str] = None
     linked_majors_parsed: Optional[str] = None
+
+
+class OfferingRow(BaseModel):
+    """course_offerings 테이블 행."""
+
+    model_config = ConfigDict(extra='forbid')
+
+    course_id: str
+    year: int = Field(..., ge=2000)
+    semester: Literal[1, 2]
 
 
 class PrereqRow(BaseModel):
