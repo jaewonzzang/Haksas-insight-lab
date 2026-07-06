@@ -796,7 +796,7 @@ git commit -m "feat: career/cluster K-Means + 최빈 진로 라벨"
   - summary: `f"이수 패턴이 유사한 졸업생 {n}명의 진로 분포 기반"` (W5 LLM 교체 대상).
 - pattern_summary 폴백: `f"유사 경로 {n}명 중 {최다 entry.label} 계열이 {share}%로 가장 많습니다."` (W5 교체 대상).
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/cards/test_card_d.py`:
 
@@ -880,9 +880,9 @@ def test_no_enrollment_alumni(con):
     assert evidence.factors == []
 ```
 
-- [ ] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/cards/test_card_d.py -v` / Expected: FAIL.
+- [x] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/cards/test_card_d.py -v` / Expected: FAIL.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `card_d.py`:
 
@@ -1038,9 +1038,9 @@ def build(
 
 주의: `matrix[[i for i, _ in ranked]]` — scipy sparse 행 인덱싱. numpy 배열 테스트 입력에서도 동작하도록 `matrix[[...], :]` 형태가 필요하면 조정 (numpy 2차원 배열은 `matrix[list]`로 행 선택 가능, sparse csr도 동일).
 
-- [ ] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/cards/test_card_d.py -v` / Expected: 3 PASS.
+- [x] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/cards/test_card_d.py -v` / Expected: 3 PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/cards/card_d.py tests/unit/cards/test_card_d.py
