@@ -288,7 +288,7 @@ git commit -m "feat: 카드 응답 스키마를 types/api.ts 확장 계약으로
   - `course_queries.list_aliases(con) -> list[sqlite3.Row]` — 컬럼 `(old_course_id, old_course_name, new_course_id)`, Task 4 `expand_taken` 입력
   - `prereq_queries.get_prereq_tree(con, course_id: str) -> dict | None`
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/db/test_queries.py`:
 
@@ -380,12 +380,12 @@ def test_get_prereq_tree(con):
     assert prereq_queries.get_prereq_tree(con, "CSE1010") is None
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `uv run pytest tests/unit/db -v`
 Expected: ImportError/AttributeError로 전부 FAIL.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `app/db/connection.py` (docstring 유지):
 
@@ -467,12 +467,12 @@ def get_prereq_tree(
     return json.loads(row["prereq_tree_json"]) if row else None
 ```
 
-- [ ] **Step 4: 통과 확인**
+- [x] **Step 4: 통과 확인**
 
 Run: `uv run pytest tests/unit/db -v`
 Expected: 8 PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/db/connection.py app/db/queries/course_queries.py app/db/queries/prereq_queries.py tests/unit/db

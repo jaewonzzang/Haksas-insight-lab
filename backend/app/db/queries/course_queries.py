@@ -1,3 +1,42 @@
-"""courses, course_restrictions 관련 SELECT 묶음."""
+"""courses·course_restrictions·course_aliases 관련 SELECT 묶음."""
 
-# TODO: list_by_department, get_course, list_restrictions_for
+import sqlite3
+from typing import Optional, Sequence
+
+
+def list_by_department(
+    con: sqlite3.Connection, departments: Sequence[str]
+) -> list[sqlite3.Row]:
+    """departments 합집합(원문 학과명)에 속한 과목 전부."""
+    if not departments:
+        return []
+    marks = ", ".join("?" for _ in departments)
+    return con.execute(
+        f"SELECT * FROM courses WHERE department IN ({marks})",
+        tuple(departments),
+    ).fetchall()
+
+
+def get_course(con: sqlite3.Connection, course_id: str) -> Optional[sqlite3.Row]:
+    return con.execute(
+        "SELECT * FROM courses WHERE course_id = ?", (course_id,)
+    ).fetchone()
+
+
+def list_restrictions_for(
+    con: sqlite3.Connection, course_ids: Sequence[str]
+) -> list[sqlite3.Row]:
+    if not course_ids:
+        return []
+    marks = ", ".join("?" for _ in course_ids)
+    return con.execute(
+        f"SELECT * FROM course_restrictions WHERE course_id IN ({marks})",
+        tuple(course_ids),
+    ).fetchall()
+
+
+def list_aliases(con: sqlite3.Connection) -> list[sqlite3.Row]:
+    """core/alias_resolver.expand_taken 입력용 전체 별칭 3열."""
+    return con.execute(
+        "SELECT old_course_id, old_course_name, new_course_id FROM course_aliases"
+    ).fetchall()
