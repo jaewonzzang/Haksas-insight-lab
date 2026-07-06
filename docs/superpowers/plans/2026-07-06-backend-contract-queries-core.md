@@ -29,7 +29,7 @@
 **Interfaces:**
 - Produces: `DashboardResponse{profile, kpi, card_a, card_c, card_d, cluster}` 및 하위 모델 전부 — W3~W6의 카드/API가 소비. 모델명·필드는 아래 코드 그대로.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/test_cards_schema.py`:
 
@@ -86,12 +86,12 @@ def test_populated_course_and_pathway():
     assert entry.tag is None and entry.dim is False  # ts optional 필드 기본값
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `uv run pytest tests/unit/test_cards_schema.py -v`
 Expected: FAIL (`profile` 필드 없음 등 ValidationError).
 
-- [ ] **Step 3: cards.py 전면 교체**
+- [x] **Step 3: cards.py 전면 교체**
 
 ```python
 """카드 A/C/D 응답 Pydantic 모델 + 통합 dashboard 응답.
@@ -242,12 +242,12 @@ class DashboardResponse(BaseModel):
 
 교체 후 `frontend/src/types/api.ts`를 읽고 필드명/optional/타입을 1:1 대조할 것 (누락·오타 발견 시 이 코드가 아니라 types/api.ts 기준으로 수정).
 
-- [ ] **Step 4: 통과 + 회귀 확인**
+- [x] **Step 4: 통과 + 회귀 확인**
 
 Run: `uv run pytest tests/unit -q`
 Expected: 실패 0. (기존 `RecommendedCourse`/`CardA` 등을 import 하는 코드는 현재 없음 — grep으로 `from app.schemas.cards import` 사용처 확인.)
 
-- [ ] **Step 5: API_SPEC.md Response 블록 갱신**
+- [x] **Step 5: API_SPEC.md Response 블록 갱신**
 
 `docs/API_SPEC.md`의 Response 코드 블록을 다음으로 교체 (나머지 섹션 유지):
 
@@ -262,7 +262,7 @@ Expected: 실패 0. (기존 `RecommendedCourse`/`CardA` 등을 import 하는 코
 }
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add app/schemas/cards.py tests/unit/test_cards_schema.py docs/API_SPEC.md

@@ -24,10 +24,12 @@
 
 ```
 {
-  kpi: { earned_credits, gpa, similar_alumni_n },
-  card_a: { major: RecommendedCourse[], general: RecommendedCourse[] },
-  card_c: { entries: PathwayEntry[] },
-  card_d: { sample_size, pattern_summary, entries: CareerEntry[] }
+  profile: { name, department, year, analysis_date, report_semester, next_semester },
+  kpi: { earned_credits, gpa, gpa_scale, similar_alumni_n },
+  card_a: { major: RecommendedCourse[], general: RecommendedCourse[], candidates: RecommendedCourse[] },
+  card_c: { cohort_label, entries: PathwayEntry[], baseline_note },
+  card_d: { similar_label, sample_size, entries: CareerEntry[], sub_title, sub_chips, pattern_summary },
+  cluster: { factors, common_courses, career_patterns, summary }
 }
 ```
 
