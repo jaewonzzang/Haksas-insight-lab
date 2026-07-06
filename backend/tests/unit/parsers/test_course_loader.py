@@ -1,11 +1,29 @@
-"""course_loader 단위 테스트 골격.
-
-4a 단계에서는 케이스 정의와 skip 만. 본문 구현은 4b 단계.
-"""
+"""course_loader 단위 테스트."""
 
 import pytest
 
 from app.parsers import course_loader
+
+
+def _row(course_id="CSE1010", credit="3", **over):
+    row = {
+        "course_id": course_id,
+        "course_name": "자료구조",
+        "department": "컴퓨터공학과",
+        "credit": credit,
+        "target_year_raw": "전학년",
+        "recommended_year_raw": "2-3학년",
+        "is_english": "O",
+        "is_cu": "",
+        "is_huss": "",
+        "is_ci": "",
+        "is_honors": "",
+        "restrictions_raw": "",
+        "description_raw": "",
+        "remarks_raw": "",
+    }
+    row.update(over)
+    return row
 
 
 def test_classify_course_type_dummy():
@@ -14,7 +32,7 @@ def test_classify_course_type_dummy():
     입력: course_id='DUMEX01', credit=None
     기대: 'dummy'
     """
-    pytest.skip("4b 단계에서 구현")
+    assert course_loader._classify_course_type("DUMEX01", None) == "dummy"
 
 
 def test_classify_course_type_special():
@@ -23,7 +41,7 @@ def test_classify_course_type_special():
     입력: course_id='AII1001', credit=None
     기대: 'special'
     """
-    pytest.skip("4b 단계에서 구현")
+    assert course_loader._classify_course_type("AII1001", None) == "special"
 
 
 def test_classify_course_type_regular_normal():
@@ -32,7 +50,7 @@ def test_classify_course_type_regular_normal():
     입력: course_id='CSE1010', credit=3.0
     기대: 'regular'
     """
-    pytest.skip("4b 단계에서 구현")
+    assert course_loader._classify_course_type("CSE1010", 3.0) == "regular"
 
 
 def test_classify_course_type_regular_credit_none_not_special():
@@ -41,7 +59,7 @@ def test_classify_course_type_regular_credit_none_not_special():
     입력: course_id='ABC9999', credit=None
     기대: 'special'
     """
-    pytest.skip("4b 단계에서 구현")
+    assert course_loader._classify_course_type("ABC9999", None) == "special"
 
 
 def test_classify_is_general_yes():
@@ -50,7 +68,7 @@ def test_classify_is_general_yes():
     입력: department='전인교육원'
     기대: 1
     """
-    pytest.skip("4b 단계에서 구현")
+    assert course_loader._classify_is_general("전인교육원") == 1
 
 
 def test_classify_is_general_no():
@@ -59,7 +77,7 @@ def test_classify_is_general_no():
     입력: department='컴퓨터공학과'
     기대: 0
     """
-    pytest.skip("4b 단계에서 구현")
+    assert course_loader._classify_is_general("컴퓨터공학과") == 0
 
 
 def test_flag_to_int_o():
@@ -68,7 +86,7 @@ def test_flag_to_int_o():
     입력: 'O'
     기대: 1
     """
-    pytest.skip("4b 단계에서 구현")
+    assert course_loader._flag_to_int("O") == 1
 
 
 def test_flag_to_int_empty():
@@ -77,7 +95,7 @@ def test_flag_to_int_empty():
     입력: ''
     기대: 0
     """
-    pytest.skip("4b 단계에서 구현")
+    assert course_loader._flag_to_int("") == 0
 
 
 def test_flag_to_int_nan():
@@ -86,7 +104,7 @@ def test_flag_to_int_nan():
     입력: float('nan')
     기대: 0
     """
-    pytest.skip("4b 단계에서 구현")
+    assert course_loader._flag_to_int(float("nan")) == 0
 
 
 def test_resolve_multi_sections_consistent():
@@ -95,7 +113,9 @@ def test_resolve_multi_sections_consistent():
     입력: 동일 course_id × 3, 동일 카탈로그 값
     기대: 통합 1행, warnings 없음
     """
-    pytest.skip("4b 단계에서 구현")
+    unique, warnings = course_loader._resolve_multi_sections([_row(), _row(), _row()])
+    assert len(unique) == 1
+    assert warnings == []
 
 
 def test_resolve_multi_sections_inconsistent_credit():
@@ -104,11 +124,18 @@ def test_resolve_multi_sections_inconsistent_credit():
     입력: 동일 course_id × 2, credit 만 상이
     기대: 첫 분반 채택, multi_section warning 1건 severity='warning'
     """
-    pytest.skip("4b 단계에서 구현")
+    unique, warnings = course_loader._resolve_multi_sections(
+        [_row(credit="3"), _row(credit="2")]
+    )
+    assert len(unique) == 1
+    assert unique[0]["credit"] == "3"
+    assert len(warnings) == 1
+    assert warnings[0].field == "multi_section"
+    assert warnings[0].severity == "warning"
 
 
-def test_load_courses_from_xls_smoke():
-    """실제 xls 로드 통합 테스트.
+def test_load_courses_from_csv_smoke():
+    """실제 csv 로드 통합 테스트.
 
     skip 사유: integration 영역. unit 에서는 검증 안 함.
     integration 테스트(`tests/integration/`)에서 별도 다룸.
