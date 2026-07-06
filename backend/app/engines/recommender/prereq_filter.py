@@ -1,7 +1,23 @@
-"""선수과목 충족 여부에 따른 점수 감산 (배제 아님).
+"""선이수 필터: 후보별 충족률(0~100 | None) 산출.
 
-- 엑셀 과목설명 선수 미이수: 강한 감산 (예: -50점, 수치는 OPEN_QUESTIONS 11)
-- 강의계획서만 권장: 약한 감산 또는 표시만
+감산 수치는 scoring.score_candidate(PREREQ_PENALTY_MAX)가 계산한다 —
+여기서 점수를 깎으면 감산 로직이 이중화되므로 충족률만 공급한다.
+hybrid 이후 감산이라는 결합 순서(CLAUDE.md)는 hybrid.combine 내부에서
+signal 가중 결합 → 감산 순으로 적용되어 보존된다.
 """
 
-# TODO: apply(scores, student_taken) -> dict[course_id, float]
+from typing import Optional, Sequence
+
+from app.core.prereq_eval import evaluate
+
+
+def fulfillments(
+    taken: set[str],
+    candidate_ids: Sequence[str],
+    trees: dict[str, Optional[dict]],
+) -> dict[str, Optional[float]]:
+    out: dict[str, Optional[float]] = {}
+    for cid in candidate_ids:
+        tree = trees.get(cid)
+        out[cid] = evaluate(taken, tree).fulfillment if tree else None
+    return out

@@ -311,7 +311,7 @@ git commit -m "feat: collaborative Jaccard 가중 코호트 선호도 signal"
 - Consumes: `core/prereq_eval.evaluate`, 트리 dict(`prereq_queries.get_prereq_tree` 산출).
 - Produces: `fulfillments(taken: set[str], candidate_ids, trees: dict[str, dict | None]) -> dict[str, float | None]` — None = 선수과목 없음. 감산 자체는 `scoring.score_candidate`가 수행(스펙 확정 구현 재사용, 결합 순서는 hybrid 내부에서 signal 결합 후 감산으로 보존).
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/unit/engines/test_prereq_filter.py`:
 
@@ -337,9 +337,9 @@ def test_missing_tree_key_is_none():
     assert prereq_filter.fulfillments(set(), ["X1"], {}) == {"X1": None}
 ```
 
-- [ ] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines/test_prereq_filter.py -v` / Expected: FAIL.
+- [x] **Step 2: 실패 확인** — Run: `uv run pytest tests/unit/engines/test_prereq_filter.py -v` / Expected: FAIL.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `prereq_filter.py` (기존 docstring 현행화 — "점수를 직접 깎지 않는 이유" 포함):
 
@@ -369,9 +369,9 @@ def fulfillments(
     return out
 ```
 
-- [ ] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines/test_prereq_filter.py -v` / Expected: 2 PASS.
+- [x] **Step 4: 통과 확인** — Run: `uv run pytest tests/unit/engines/test_prereq_filter.py -v` / Expected: 2 PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/engines/recommender/prereq_filter.py tests/unit/engines/test_prereq_filter.py
