@@ -1,9 +1,6 @@
-"""prereq_parser 단위 테스트 골격.
+"""prereq_parser 단위 테스트."""
 
-4a 단계에서는 케이스 정의와 skip 만. 본문 구현은 4b 단계.
-"""
-
-import pytest
+import json
 
 from app.parsers import prereq_parser
 
@@ -14,7 +11,11 @@ def test_no_prereq_keyword():
     입력: description_raw='이 과목은 선형대수의 응용을 다룬다.'
     기대: (None, [])
     """
-    pytest.skip("4b 단계에서 구현")
+    record, warnings = prereq_parser.parse_prerequisites(
+        "CSE2000", "이 과목은 선형대수의 응용을 다룬다."
+    )
+    assert record is None
+    assert warnings == []
 
 
 def test_single_course():
@@ -23,7 +24,8 @@ def test_single_course():
     입력: '선수과목: CSE1010'
     기대 tree: {"type":"course","code":"CSE1010"}
     """
-    pytest.skip("4b 단계에서 구현")
+    record, _ = prereq_parser.parse_prerequisites("CSE2000", "선수과목: CSE1010")
+    assert json.loads(record["prereq_tree_json"]) == {"type": "course", "code": "CSE1010"}
 
 
 def test_and_two_courses():
@@ -32,7 +34,14 @@ def test_and_two_courses():
     입력: '선수과목: CSE1010, CSE1020'
     기대 tree: AND[leaf('CSE1010'), leaf('CSE1020')]
     """
-    pytest.skip("4b 단계에서 구현")
+    record, _ = prereq_parser.parse_prerequisites("CSE2000", "선수과목: CSE1010, CSE1020")
+    assert json.loads(record["prereq_tree_json"]) == {
+        "type": "and",
+        "children": [
+            {"type": "course", "code": "CSE1010"},
+            {"type": "course", "code": "CSE1020"},
+        ],
+    }
 
 
 def test_or_two_courses_korean():
@@ -41,7 +50,14 @@ def test_or_two_courses_korean():
     입력: '선수과목: CSE1010 또는 CSE1020'
     기대 tree: OR[leaf('CSE1010'), leaf('CSE1020')]
     """
-    pytest.skip("4b 단계에서 구현")
+    record, _ = prereq_parser.parse_prerequisites("CSE2000", "선수과목: CSE1010 또는 CSE1020")
+    assert json.loads(record["prereq_tree_json"]) == {
+        "type": "or",
+        "children": [
+            {"type": "course", "code": "CSE1010"},
+            {"type": "course", "code": "CSE1020"},
+        ],
+    }
 
 
 def test_or_two_courses_english():
@@ -50,7 +66,14 @@ def test_or_two_courses_english():
     입력: '선수과목: CSE1010 or CSE1020'
     기대 tree: OR[leaf('CSE1010'), leaf('CSE1020')]
     """
-    pytest.skip("4b 단계에서 구현")
+    record, _ = prereq_parser.parse_prerequisites("CSE2000", "선수과목: CSE1010 or CSE1020")
+    assert json.loads(record["prereq_tree_json"]) == {
+        "type": "or",
+        "children": [
+            {"type": "course", "code": "CSE1010"},
+            {"type": "course", "code": "CSE1020"},
+        ],
+    }
 
 
 def test_or_group_in_paren_then_and():
@@ -59,7 +82,19 @@ def test_or_group_in_paren_then_and():
     입력: '선수과목: (CSE1010 또는 CSE1020), MAT2001'
     기대 tree: AND[OR[leaf('CSE1010'), leaf('CSE1020')], leaf('MAT2001')]
     """
-    pytest.skip("4b 단계에서 구현")
+    record, _ = prereq_parser.parse_prerequisites(
+        "CSE2000", "선수과목: (CSE1010 또는 CSE1020), MAT2001"
+    )
+    assert json.loads(record["prereq_tree_json"]) == {
+        "type": "and",
+        "children": [
+            {"type": "or", "children": [
+                {"type": "course", "code": "CSE1010"},
+                {"type": "course", "code": "CSE1020"},
+            ]},
+            {"type": "course", "code": "MAT2001"},
+        ],
+    }
 
 
 def test_trailing_alpha():
@@ -68,7 +103,8 @@ def test_trailing_alpha():
     입력: '선수과목: LING1001A'
     기대 tree: leaf('LING1001A')
     """
-    pytest.skip("4b 단계에서 구현")
+    record, _ = prereq_parser.parse_prerequisites("LING2001", "선수과목: LING1001A")
+    assert json.loads(record["prereq_tree_json"]) == {"type": "course", "code": "LING1001A"}
 
 
 def test_unbalanced_paren_warning():
@@ -77,7 +113,12 @@ def test_unbalanced_paren_warning():
     입력: '선수과목: (CSE1010, MAT2001'
     기대: (None, warning 1건 severity='error')
     """
-    pytest.skip("4b 단계에서 구현")
+    record, warnings = prereq_parser.parse_prerequisites(
+        "CSE2000", "선수과목: (CSE1010, MAT2001"
+    )
+    assert record is None
+    assert len(warnings) == 1
+    assert warnings[0].severity == "error"
 
 
 def test_regex_no_match_warning():
@@ -86,7 +127,12 @@ def test_regex_no_match_warning():
     입력: '선수과목: 자료구조와 알고리즘'
     기대: (None, warning 1건 severity='warning')
     """
-    pytest.skip("4b 단계에서 구현")
+    record, warnings = prereq_parser.parse_prerequisites(
+        "CSE2000", "선수과목: 자료구조와 알고리즘"
+    )
+    assert record is None
+    assert len(warnings) == 1
+    assert warnings[0].severity == "warning"
 
 
 def test_or_group_in_paren_after_and():
@@ -109,4 +155,17 @@ def test_or_group_in_paren_after_and():
     명시된 케이스를 4a-clean-2 단계에서 이관.
     4b 본문 구현 시 실제 데이터로 검증되면 해석 조정 가능.
     """
-    pytest.skip("4b 단계에서 구현")
+    record, _ = prereq_parser.parse_prerequisites(
+        "ECO3000", "선수과목: ECO2001, ECO2003(또는 STS2005 또는 STS2006)"
+    )
+    assert json.loads(record["prereq_tree_json"]) == {
+        "type": "and",
+        "children": [
+            {"type": "course", "code": "ECO2001"},
+            {"type": "or", "children": [
+                {"type": "course", "code": "ECO2003"},
+                {"type": "course", "code": "STS2005"},
+                {"type": "course", "code": "STS2006"},
+            ]},
+        ],
+    }
