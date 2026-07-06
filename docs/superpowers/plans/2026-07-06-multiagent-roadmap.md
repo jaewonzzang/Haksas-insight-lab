@@ -26,9 +26,9 @@
 
 | 웨이브 | 담당 | 내용 | 의존성 | 플랜 문서 |
 |---|---|---|---|---|
-| **W1-B** (진행) | backend | course DB 빌드: `course_offerings` 스키마, `course_loader`(CSV), `prereq_parser`, `build_course_db`, 통합 테스트 | 없음 (스펙 완료) | `2026-07-06-backend-course-db-build.md` |
-| **W1-F** (진행) | frontend | 입력 폼 → `StudentInput` 배선, `api.analyze` 경유(mock 토글 유지), 에러 화면 | 없음 | `2026-07-06-frontend-analyze-wiring.md` |
-| **W2** | backend | 계약 미러(`schemas/cards.py` ← `types/api.ts`) + `db/connection`+`queries/{course,prereq}` + `core/{prereq_eval, alias_resolver, dept_normalizer}` | W1-B (DB 존재) | 웨이브 시작 시 작성 |
+| **W1-B** ✅ 완료 (2026-07-06) | backend | course DB 빌드: `course_offerings` 스키마, `course_loader`(CSV), `prereq_parser`, `build_course_db`, 통합 테스트 — courses 1,807 / offerings 3,312 | 없음 (스펙 완료) | `2026-07-06-backend-course-db-build.md` |
+| **W1-F** ✅ 완료 (2026-07-06) | frontend | 입력 폼 → `StudentInput` 배선, `api.analyze` 경유(mock 토글 유지), 에러 화면 | 없음 | `2026-07-06-frontend-analyze-wiring.md` |
+| **W2** (진행) | backend | 계약 미러(`schemas/cards.py` ← `types/api.ts`) + `db/connection`+`queries/{course,prereq}` + `core/{prereq_eval, alias_resolver, dept_normalizer}` | W1-B (DB 존재) | `2026-07-06-backend-contract-queries-core.md` |
 | **W3** | backend | recommender 5모듈(content/collab/hybrid/prereq_filter/restriction_filter — 기존 scoring·weights 결합) + `cards/card_a` + factors/why_summary 채움 | W2 | 〃 (교양 후보 A6 미결 → `is_general=1` 풀, `area_label=null`) |
 | **W4** | backend | `engines/pathway` + `engines/career`(mock alumni) + `cards/card_c`·`card_d` | W2 (W3와 부분 병행 가능) | 〃 |
 | **W5** | backend | `llm/translator` + `prompts` + `providers/anthropic` (통역 1~2문장, 실패 시 결정론 문구 폴백) | W3·W4 | 〃 |
@@ -37,13 +37,13 @@
 
 각 웨이브 시작 시 메인 세션이 superpowers:writing-plans로 상세 플랜(파일·코드·TDD 단계 포함)을 작성한 뒤 해당 에이전트에 디스패치한다. 웨이브 종료 시 메인 세션이 결과 리뷰 후 다음 웨이브 진행.
 
-## 잠정 채택 (사용자 확인 대기 — 반대 시 해당 웨이브 전에 변경)
+## 확정 (2026-07-06 사용자 승인 — `docs/OPEN_QUESTIONS.md` 반영 완료)
 
-- **A2**: 통합 `DashboardResponse` 유지 (현행).
-- **A7**: LLM은 **AnthropicProvider 우선 구현** (키 보유). 마인드로직/GPT는 스텁 유지 — 엔드포인트 확정 시 추가.
-- **A10**: 이수경로 임베딩 = **과목 ID TF-IDF** (mock 단계 최소 구현, 실데이터 후 재검토).
-- **A11**: 카드 D 클러스터링 = **K-Means** (mock 진로 라벨 수 기반 k, 실데이터 후 HDBSCAN 재검토).
-- **A13**: "왜?" 패널 = `types/api.ts`에 이미 있는 `factors`/`why_summary`/`cluster` 필드를 **백엔드가 결정론 점수 분해로 채움** (전용 why 필드 신설 안 함).
+- **A2**: 통합 `DashboardResponse` 유지. `types/api.ts` 확장 계약이 진실원, 백엔드가 미러.
+- **A7**: LLM은 **AnthropicProvider 우선 구현** (키 보유). 마인드로직/GPT는 스텁 유지 — 엔드포인트 확정 시 체인 구성 (잔여).
+- **A10**: 이수경로 임베딩 = **과목 ID TF-IDF** (mock 단계, 실데이터 후 재검토 — 잔여).
+- **A11**: 카드 D 클러스터링 = **K-Means** (mock 진로 라벨 수 기반 k, 실데이터 후 HDBSCAN 재검토 — 잔여).
+- **A13**: "왜?" 패널 = `factors`/`why_summary`/`cluster` 필드를 **백엔드가 결정론 점수 분해로 채움** (전용 why 필드 신설 안 함).
 
 ## 미결정 유지 (블로킹 아님)
 

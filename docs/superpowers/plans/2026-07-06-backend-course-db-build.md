@@ -31,7 +31,7 @@
 **Interfaces:**
 - Produces: `OfferingRow(course_id: str, year: int, semester: Literal[1, 2])` — Task 4가 INSERT 직전 검증에 사용. 6테이블 스키마 — Task 5 통합 테스트가 검증.
 
-- [ ] **Step 1: schema.sql에 DROP + CREATE + 인덱스 추가**
+- [x] **Step 1: schema.sql에 DROP + CREATE + 인덱스 추가**
 
 DROP 블록 맨 위(기존 `DROP TABLE IF EXISTS course_restrictions;` 위)에 추가:
 
@@ -64,7 +64,7 @@ CREATE INDEX idx_offerings_year_sem ON course_offerings(year, semester);
 
 파일 헤더의 `-- 최종 갱신:` 날짜를 `2026-07-06`으로 갱신하고, "1단계 검토 후 추가 결정" 목록에 한 줄 추가: `--   course_offerings 신설 (4학기 다학기 저장, 2026-07-06).`
 
-- [ ] **Step 2: rows.py에 OfferingRow 추가**
+- [x] **Step 2: rows.py에 OfferingRow 추가**
 
 `CourseRow` 클래스 뒤에 추가 (모듈 docstring의 "5테이블"은 "6테이블"로 갱신):
 
@@ -81,12 +81,12 @@ class OfferingRow(BaseModel):
 
 `app/schemas/__init__.py`의 re-export에 `OfferingRow` 추가.
 
-- [ ] **Step 3: 기존 테스트 회귀 확인**
+- [x] **Step 3: 기존 테스트 회귀 확인**
 
 Run: `uv run pytest tests/unit -q`
 Expected: 기존 통과 테스트 전부 PASS (17개 수준), skip 다수 — 실패 0.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add app/db/schema.sql app/schemas/rows.py app/schemas/__init__.py
@@ -105,7 +105,7 @@ git commit -m "feat: course_offerings 테이블 + OfferingRow 추가 (다학기 
 - Consumes: `CourseRow`, `WarningRow` (`app.schemas`).
 - Produces: `load_courses_from_csv(csv_path: str, year: int, semester: int) -> tuple[list[CourseRow], list[WarningRow]]` — Task 4가 호출. `_resolve_multi_sections`는 컬럼 매핑 후 필드 dict 리스트(값은 str)를 받는다.
 
-- [ ] **Step 1: 테스트 11개 un-skip 작성**
+- [x] **Step 1: 테스트 11개 un-skip 작성**
 
 `test_course_loader.py`에서 각 테스트의 `pytest.skip(...)`을 아래 본문으로 교체(기존 docstring 유지). 파일 상단에 헬퍼 추가:
 
@@ -177,12 +177,12 @@ def test_resolve_multi_sections_inconsistent_credit():
 
 smoke 케이스는 `test_load_courses_from_csv_smoke`로 개명, skip 유지(integration 영역).
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `uv run pytest tests/unit/parsers/test_course_loader.py -v`
 Expected: 11개 FAIL (NotImplementedError), smoke 1개 SKIP.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `course_loader.py` 전체를 다음으로 교체(모듈 docstring은 기존 내용을 CSV 기준으로 갱신 — xls/read_html 언급 제거):
 
@@ -303,12 +303,12 @@ def _flag_to_int(value: Any) -> int:
 
 각 함수의 기존 docstring(Args/Returns)은 유지·갱신해서 붙인다.
 
-- [ ] **Step 4: 통과 확인**
+- [x] **Step 4: 통과 확인**
 
 Run: `uv run pytest tests/unit/parsers/test_course_loader.py -v`
 Expected: 11 PASS, 1 SKIP.
 
-- [ ] **Step 5: 매핑 검증 (수강신청 참조사항 = restrictions_raw 확인)**
+- [x] **Step 5: 매핑 검증 (수강신청 참조사항 = restrictions_raw 확인)**
 
 Run:
 ```bash
@@ -316,7 +316,7 @@ uv run python -c "import pandas as pd; df = pd.read_csv('data/raw/개설교과�
 ```
 Expected: 학과별 수강제한 문구(예: '...학과 수강불가/수강가능' 류)가 보임 → `restriction_parser` 4패턴 대상 원문 맞음. 다른 성격의 텍스트만 보이면 STOP — 매핑 재검토 후 보고.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add app/parsers/course_loader.py tests/unit/parsers/test_course_loader.py
@@ -334,7 +334,7 @@ git commit -m "feat: course_loader CSV 구현 (분반 통합·분류·플래그)
 **Interfaces:**
 - Produces: `parse_prerequisites(course_id: str, description_raw: Optional[str]) -> tuple[Optional[dict], list[WarningRow]]` — dict 키는 `{course_id, prereq_raw, prereq_tree_json}`. Task 4가 호출.
 
-- [ ] **Step 1: 테스트 10개 un-skip 작성**
+- [x] **Step 1: 테스트 10개 un-skip 작성**
 
 각 테스트의 `pytest.skip(...)`을 교체. 트리 검증은 `json.loads(record["prereq_tree_json"])` 후 비교. 파일 상단에 `import json` 추가:
 
@@ -432,12 +432,12 @@ def test_or_group_in_paren_after_and():
     }
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `uv run pytest tests/unit/parsers/test_prereq_parser.py -v`
 Expected: 10개 FAIL (NotImplementedError).
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `prereq_parser.py` 구현(기존 모듈/함수 docstring 유지, import에 `json`, `re` 추가):
 
@@ -592,17 +592,17 @@ def _parse_segment(tokens: List[str]) -> Dict[str, Any]:
     return {"type": "and", "children": items}
 ```
 
-- [ ] **Step 4: 통과 확인**
+- [x] **Step 4: 통과 확인**
 
 Run: `uv run pytest tests/unit/parsers/test_prereq_parser.py -v`
 Expected: 10 PASS.
 
-- [ ] **Step 5: 전체 유닛 회귀**
+- [x] **Step 5: 전체 유닛 회귀**
 
 Run: `uv run pytest tests/unit -q`
 Expected: 실패 0.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add app/parsers/prereq_parser.py tests/unit/parsers/test_prereq_parser.py
@@ -620,7 +620,7 @@ git commit -m "feat: prereq_parser AND/OR 트리 구현"
 - Consumes: `load_courses_from_csv`(Task 2), `parse_prerequisites`(Task 3), `parse_aliases(new_course_id, source_text)`, `parse_linked_majors(course_id, remarks_raw)`, `parse_restrictions(course_id, restrictions_raw)`, `OfferingRow`(Task 1), `config.RAW_DIR`/`config.DB_PATH`/`config.BASE_DIR`.
 - Produces: `data/processed/s_compass_courses.db` (6테이블) + 테이블별 행수 요약 출력.
 
-- [ ] **Step 1: 구현**
+- [x] **Step 1: 구현**
 
 `scripts/build_course_db.py` 전체 교체(모듈 docstring은 기존 유지하되 xls→CSV·6테이블·usage 갱신):
 
@@ -759,12 +759,12 @@ if __name__ == "__main__":
     main()
 ```
 
-- [ ] **Step 2: 실제 빌드 실행**
+- [x] **Step 2: 실제 빌드 실행**
 
 Run: `uv run python scripts/build_course_db.py`
 Expected: 4개 CSV 각각 적재 로그 + `빌드 완료` + 6테이블 행수 출력. `courses` ≈ 1,807, `course_offerings` > `courses`. 예외 발생 시(예: 학점 컬럼 비수치 문자열) 원인 파악 후 최소 수정 — 원인·수정 내용을 완료 보고에 포함.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add scripts/build_course_db.py
@@ -781,7 +781,7 @@ git commit -m "feat: build_course_db 오케스트레이터 구현 (4학기 CSV, 
 **Interfaces:**
 - Consumes: 실 CSV 4개(`data/raw/`), `scripts/build_course_db.py` CLI.
 
-- [ ] **Step 1: 통합 테스트 작성**
+- [x] **Step 1: 통합 테스트 작성**
 
 ```python
 """4개 실 CSV → s_compass_courses.db 빌드 통합 검증 (스펙 §5).
@@ -874,17 +874,17 @@ def test_fk_integrity(built_db):
     assert orphans == 0
 ```
 
-- [ ] **Step 2: 실행**
+- [x] **Step 2: 실행**
 
 Run: `uv run pytest tests/integration/test_build_course_db.py -v`
 Expected: 4 PASS (수 분 소요 가능). 실패 시 원인 규명 — 기대 범위가 실데이터와 다르면 실측값 기준으로 상수 조정하고 근거를 완료 보고에 기록.
 
-- [ ] **Step 3: 전체 테스트**
+- [x] **Step 3: 전체 테스트**
 
 Run: `uv run pytest tests/unit tests/integration -q`
 Expected: 실패 0.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add tests/integration/test_build_course_db.py
@@ -903,9 +903,9 @@ git commit -m "test: course DB 빌드 통합 테스트 (4학기 실 CSV)"
 
 **Interfaces:** 없음 (문서만).
 
-- [ ] **Step 1: 위 4개 파일 갱신** (스키마 변경에서 파생된 표기만 수정 — 그 외 내용 변경 금지)
+- [x] **Step 1: 위 4개 파일 갱신** (스키마 변경에서 파생된 표기만 수정 — 그 외 내용 변경 금지)
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add docs/DATA_SCHEMA.md docs/OPEN_QUESTIONS.md docs/ARCHITECTURE.md backend/README.md
