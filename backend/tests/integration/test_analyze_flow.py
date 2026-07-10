@@ -52,3 +52,15 @@ def test_analyze_returns_full_dashboard():
 def test_health():
     client = TestClient(app)
     assert client.get("/health").status_code == 200
+
+
+def test_courses_debug_lookup():
+    client = TestClient(app)
+    res = client.get("/courses/CSE3080")  # 자료구조
+    assert res.status_code == 200
+    assert res.json()["course_id"] == "CSE3080"
+
+
+def test_courses_debug_404():
+    client = TestClient(app)
+    assert client.get("/courses/NOPE9999").status_code == 404
