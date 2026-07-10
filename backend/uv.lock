@@ -872,6 +872,7 @@ dependencies = [
 
 [package.optional-dependencies]
 dev = [
+    { name = "httpx" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "ruff" },
@@ -881,6 +882,7 @@ dev = [
 requires-dist = [
     { name = "anthropic" },
     { name = "fastapi" },
+    { name = "httpx", marker = "extra == 'dev'" },
     { name = "lxml" },
     { name = "numpy" },
     { name = "openpyxl" },
