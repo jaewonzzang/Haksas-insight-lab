@@ -40,8 +40,10 @@
 | 메서드 | 경로 | 설명 |
 |---|---|---|
 | `GET` | `/health` | liveness |
-| `GET` | `/courses/...` | 디버그용 과목 조회. 외부 노출 X. |
+| `GET` | `/courses/{course_id}` | 디버그용 과목 단건 조회. 외부 노출 X. |
 
 ## 프론트 동기화
 
 `frontend/src/types/api.ts` 가 위 schemas 의 미러. 변경 시 함께 갱신 (수동 또는 codegen — `OPEN_QUESTIONS.md` A12).
+
+CORS: Vite dev 서버(localhost:5173) 허용 — app/main.py.
