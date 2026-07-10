@@ -54,7 +54,17 @@ export function useAnalysis(): UseAnalysis {
       setPhase("loading");
       try {
         const result = await analyze(buildStudentInput(selected, form), selected.dashboard);
-        setData(result);
+        // 실모드에서 백엔드는 name/year를 모른다(SAINT 연계 전) — 데모 헤더를 병합.
+        // mock 모드에서는 동일 값이라 no-op.
+        const merged: DashboardResponse = {
+          ...result,
+          profile: {
+            ...result.profile,
+            name: selected.dashboard.profile.name,
+            year: selected.dashboard.profile.year,
+          },
+        };
+        setData(merged);
         setPhase("dashboard");
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
