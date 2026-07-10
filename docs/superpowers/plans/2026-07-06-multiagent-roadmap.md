@@ -30,7 +30,7 @@
 | **W1-F** ✅ 완료 (2026-07-06) | frontend | 입력 폼 → `StudentInput` 배선, `api.analyze` 경유(mock 토글 유지), 에러 화면 | 없음 | `2026-07-06-frontend-analyze-wiring.md` |
 | **W2** ✅ 완료 (2026-07-06) | backend | 계약 미러(`schemas/cards.py` ← `types/api.ts`, 불일치 0건) + `db/connection`+`queries` + `core/{prereq_eval, alias_resolver, dept_normalizer}` — 테스트 84 passed | W1-B (DB 존재) | `2026-07-06-backend-contract-queries-core.md` |
 | **W3** ✅ 완료 (2026-07-06) | backend | recommender 5모듈 + `cards/card_a` — 테스트 103 passed, 실 DB 스모크(전공4/교양4/후보20, 결정론) 통과 | W2 | `2026-07-06-backend-recommender-card-a.md` |
-| **W4** (진행) | backend | mock 생성기 현실화(학과명 DB 원문·편향 샘플링) + `engines/pathway` + `engines/career`(TF-IDF·K-Means) + `cards/card_c`·`card_d`(+ClusterEvidence) | W3 | `2026-07-06-backend-pathway-career-cards.md` |
+| **W4** ✅ 완료 (2026-07-10 리뷰 통과) | backend | mock 생성기 현실화(학과명 DB 원문·편향 샘플링) + `engines/pathway` + `engines/career`(TF-IDF·K-Means) + `cards/card_c`·`card_d`(+ClusterEvidence) — 테스트 125 passed, 통합 7 passed(카드 C 코호트 180·카드 D sample 30) | W3 | `2026-07-06-backend-pathway-career-cards.md` |
 | **W5** | backend | `llm/translator` + `prompts` + `providers/anthropic` (통역 1~2문장, 실패 시 결정론 문구 폴백) | W3·W4 | 〃 |
 | **W6** | backend + frontend | `api/analyze` 배선(+CORS), `api/courses` 디버그, 프론트 `VITE_USE_MOCK=false` E2E 검증, `docs/API_SPEC.md` 최종화 | W1~W5 | 〃 |
 | **W7** (실데이터 수령 후) | backend | `adapters/real_alumni` 매핑(A1), 가중치·컷오프 튜닝(A5), 시연 학과 범위(A4) | 학사팀 데이터 | 〃 |
