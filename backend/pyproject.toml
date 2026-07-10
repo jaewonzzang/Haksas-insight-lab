@@ -16,7 +16,7 @@ dependencies = [
     "scikit-learn",
     "numpy",
     # LLM 공급자 — 실제 사용 시 활성화. 일부는 OPEN_QUESTIONS 확정 후.
-    # "anthropic",
+    "anthropic",
     # "openai",
     # 벡터 인덱스 — A3 확정 후
     # "chromadb",
