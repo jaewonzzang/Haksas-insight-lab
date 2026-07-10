@@ -1,12 +1,16 @@
-"""LLM 공급자 공통 인터페이스 (Protocol).
+"""LLM Provider 프로토콜 — 구조화 통역 1콜, 실패는 None.
 
-모든 공급자는 동일 시그니처의 complete(messages, **opts) -> str 을 구현한다.
+AnthropicProvider 외 공급자(마인드로직/GPT)는 A7 잔여 — 만들지 않음 (YAGNI).
 """
 
 from typing import Protocol
 
+from pydantic import BaseModel
 
-class LLMProvider(Protocol):
-    name: str
 
-    def complete(self, prompt: str, **opts) -> str: ...
+class Provider(Protocol):
+    def translate(
+        self, system: str, user: str, schema: type[BaseModel]
+    ) -> BaseModel | None:
+        """구조화 통역 1콜. 실패(타임아웃·오류·파싱)면 None."""
+        ...
