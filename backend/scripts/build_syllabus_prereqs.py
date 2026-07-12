@@ -14,6 +14,7 @@
 
 import argparse
 import json
+import re
 import sqlite3
 import sys
 from pathlib import Path
@@ -22,6 +23,29 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app import config
 from app.parsers.prereq_parser import parse_prerequisites
+
+
+# "선수과목 없음" 명시 표현 (2026-07-13 실PDF 6건 실측: "없음.", "no prerequisites needed")
+_NO_PREREQ = re.compile(r"없음|없다|no\s+prereq", re.IGNORECASE)
+_CODE_PREFIX = re.compile(r"^([A-Z]{2,5}\d{3,4})")
+
+
+def _resolve_course_id(con: sqlite3.Connection, rec: dict) -> str | None:
+    """course_id 결정: 파서 추출 → 영문 양식 폴백(과목명 내 코드, 파일명 과목명 유일 일치)."""
+    cid = (rec.get("course_id") or "").split("/")[0].strip()
+    if cid:
+        return cid
+    m = _CODE_PREFIX.match((rec.get("course_name") or "").strip())
+    if m:
+        return m.group(1)  # 영문 양식이 과목명 칸에 "CSE3030-01" 형태로 담는 경우
+    parts = (rec.get("file") or "").rsplit("_", 2)  # "..._{과목명}_강의계획서.pdf"
+    if len(parts) == 3:
+        rows = con.execute(
+            "SELECT DISTINCT course_id FROM courses WHERE course_name = ?", (parts[1],)
+        ).fetchall()
+        if len(rows) == 1:
+            return rows[0][0]
+    return None
 
 
 def merge_syllabus_prereqs(
@@ -33,12 +57,12 @@ def merge_syllabus_prereqs(
     stats = {"inserted": 0, "skipped_existing": 0, "no_prereq": 0, "no_course": 0, "unparsed": 0}
 
     for rec in records:
-        cid = (rec.get("course_id") or "").split("/")[0].strip()
+        cid = _resolve_course_id(con, rec)
         raw = (rec.get("prerequisites_raw") or "").strip()
         if not cid or cid not in known:
             stats["no_course"] += 1
             continue
-        if not raw:
+        if not raw or _NO_PREREQ.search(raw):
             stats["no_prereq"] += 1
             continue
         if cid in existing:
