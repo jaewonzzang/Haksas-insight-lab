@@ -47,6 +47,10 @@ def test_analyze_returns_full_dashboard():
     # 통역 문구 원문 의존 금지 — 비어 있지 않음만 확인 (폴백/통역 어느 쪽이든 통과)
     assert dash.card_d.pattern_summary.strip()
     assert all(c.reason_short.strip() for c in dash.card_a.major)
+    import re as _re
+    all_recs = dash.card_a.major + dash.card_a.general + dash.card_a.candidates
+    assert all(not _re.fullmatch(r"[A-Z]{2,4}G\d{3}", c.course_id) for c in all_recs)
+    assert all("캡스톤" not in c.course_name for c in all_recs)
 
 
 def test_health():

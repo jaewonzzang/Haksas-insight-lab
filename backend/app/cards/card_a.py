@@ -3,6 +3,7 @@
 reason_short/why_summary 는 W5(llm/translator) 도입 전까지 결정론 폴백.
 """
 
+import re
 import sqlite3
 
 from app.adapters.alumni_types import AlumniRecord
@@ -25,6 +26,13 @@ CANDIDATES_CAP = 20
 TARGET_SEMESTER = 2  # 추천 대상 = 다음 학기 (2026-2)
 GENERAL_DEPT = "전인교육원"
 
+# 대학원 연계(G코드: 학과코드+G+숫자3) · 캡스톤 과목은 학부 추천 풀에서 제외 (2026-07-12)
+_GRAD_CODE = re.compile(r"[A-Z]{2,4}G\d{3}")
+
+
+def _excluded_from_pool(course_id: str, course_name: str) -> bool:
+    return bool(_GRAD_CODE.fullmatch(course_id)) or "캡스톤" in course_name
+
 
 def build(
     student: StudentInput,
@@ -44,6 +52,7 @@ def build(
             if r["course_type"] == "regular"
             and r["course_id"] not in taken
             and r["course_id"] in offered
+            and not _excluded_from_pool(r["course_id"], r["course_name"])
         ]
 
     major_pool = _pool(candidate_departments(student.department))
