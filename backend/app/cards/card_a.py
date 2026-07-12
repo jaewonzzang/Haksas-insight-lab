@@ -7,6 +7,7 @@ import re
 import sqlite3
 
 from app.adapters.alumni_types import AlumniRecord
+from app.core import year_rules
 from app.core.alias_resolver import expand_taken
 from app.core.dept_normalizer import candidate_departments
 from app.db.queries import course_queries, prereq_queries
@@ -32,6 +33,16 @@ _GRAD_CODE = re.compile(r"[A-Z]{2,4}G\d{3}")
 
 def _excluded_from_pool(course_id: str, course_name: str) -> bool:
     return bool(_GRAD_CODE.fullmatch(course_id)) or "캡스톤" in course_name
+
+
+def _enrollable(row: sqlite3.Row, student_year: int | None) -> bool:
+    """수강학년 불일치 = 신청 불가 → 표시 자체 제외 (2026-07-13 사용자 확정).
+
+    학년 미입력이면 필터 생략.
+    """
+    if student_year is None:
+        return True
+    return student_year in year_rules.parse_target_years(row["target_year_raw"])
 
 
 def _major_departments(student: StudentInput) -> list[str]:
@@ -63,6 +74,7 @@ def build(
             and r["course_id"] not in taken
             and r["course_id"] in offered
             and not _excluded_from_pool(r["course_id"], r["course_name"])
+            and _enrollable(r, student.year)
         ]
 
     major_pool = _pool(_major_departments(student))
@@ -80,10 +92,23 @@ def build(
     collab = collaborative.score(taken, pool_ids, alumni)
     if collab:
         signals_by_label["코호트 선호도"] = collab
+    if student.year is not None:
+        signals_by_label["학년 적합도"] = {
+            r["course_id"]: year_rules.year_fit_score(
+                student.year, year_rules.parse_recommended_years(r["recommended_year_raw"])
+            )
+            for r in pool
+        }
 
     trees = {cid: prereq_queries.get_prereq_tree(con, cid) for cid in pool_ids}
     fulfill = prereq_filter.fulfillments(taken, pool_ids, trees)
-    scored = hybrid.combine(signals_by_label, fulfill, pool_ids)
+    # 정규화는 그룹(전공/교양) 내 상대 강도 — combine이 candidate_ids 기준으로 스케일 (2026-07-13)
+    major_pool_ids = [r["course_id"] for r in major_pool]
+    general_pool_ids = [r["course_id"] for r in general_pool]
+    scored = {
+        **hybrid.combine(signals_by_label, fulfill, major_pool_ids),
+        **hybrid.combine(signals_by_label, fulfill, general_pool_ids),
+    }
 
     student_depts = {student.department, *student.extra_majors, *_major_departments(student)}
     scored = restriction_filter.apply(

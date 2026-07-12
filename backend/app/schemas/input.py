@@ -13,6 +13,9 @@ class StudentInput(BaseModel):
     extra_majors: list[str] = Field(
         default_factory=list, description="복수전공 학과/학부 원문 목록"
     )
+    year: int | None = Field(
+        None, ge=1, le=4, description="학년 (1~4). None이면 수강학년 필터·학년 적합도 생략"
+    )
     taken_course_ids: list[str] = Field(default_factory=list, description="이수 완료 과목 ID")
     interest_career: str | None = Field(None, description="관심 진로 (드롭다운)")
     consider_multimajor: bool = Field(False, description="다전공 고려 여부")

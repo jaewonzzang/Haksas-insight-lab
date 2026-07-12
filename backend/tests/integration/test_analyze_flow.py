@@ -30,6 +30,7 @@ def test_analyze_returns_full_dashboard():
             "student_id": "A",
             "department": "지식융합미디어학부",
             "extra_majors": ["컴퓨터공학과"],
+            "year": 3,
             "taken_course_ids": TAKEN,
             "interest_career": None,
             "consider_multimajor": True,
