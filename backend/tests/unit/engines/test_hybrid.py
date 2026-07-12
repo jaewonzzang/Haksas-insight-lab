@@ -35,3 +35,10 @@ def test_combine_max_scales_signals_within_pool():
 def test_combine_all_zero_signal_stays_zero():
     out = hybrid.combine({"코호트 선호도": {"C1": 0.0}}, {"C1": None}, ["C1"])
     assert out["C1"].score_percent == 0
+
+
+def test_combine_scales_within_candidates_only():
+    # 그룹별 호출 시 다른 그룹의 강한 신호가 스케일을 누르지 않는다 (2026-07-13 사용자 승인)
+    signals = {"코호트 선호도": {"G1": 10.0, "M1": 50.0}}
+    out = hybrid.combine(signals, {"G1": None}, ["G1"])
+    assert out["G1"].score_percent == 100
