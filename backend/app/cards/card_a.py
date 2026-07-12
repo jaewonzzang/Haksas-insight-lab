@@ -34,6 +34,16 @@ def _excluded_from_pool(course_id: str, course_name: str) -> bool:
     return bool(_GRAD_CODE.fullmatch(course_id)) or "캡스톤" in course_name
 
 
+def _major_departments(student: StudentInput) -> list[str]:
+    """주전공+복수전공의 추천 풀 학과 합집합 (원문, 순서 보존 중복 제거)."""
+    out: list[str] = []
+    for dept in (student.department, *student.extra_majors):
+        for d in candidate_departments(dept):
+            if d not in out:
+                out.append(d)
+    return out
+
+
 def build(
     student: StudentInput,
     con: sqlite3.Connection,
@@ -55,7 +65,7 @@ def build(
             and not _excluded_from_pool(r["course_id"], r["course_name"])
         ]
 
-    major_pool = _pool(candidate_departments(student.department))
+    major_pool = _pool(_major_departments(student))
     general_pool = _pool([GENERAL_DEPT])
     pool = major_pool + general_pool
     pool_ids = [r["course_id"] for r in pool]
@@ -75,7 +85,7 @@ def build(
     fulfill = prereq_filter.fulfillments(taken, pool_ids, trees)
     scored = hybrid.combine(signals_by_label, fulfill, pool_ids)
 
-    student_depts = {student.department, *candidate_departments(student.department)}
+    student_depts = {student.department, *student.extra_majors, *_major_departments(student)}
     scored = restriction_filter.apply(
         scored,
         student_depts,

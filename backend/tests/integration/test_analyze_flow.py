@@ -29,6 +29,7 @@ def test_analyze_returns_full_dashboard():
         json={
             "student_id": "A",
             "department": "지식융합미디어학부",
+            "extra_majors": ["컴퓨터공학과"],
             "taken_course_ids": TAKEN,
             "interest_career": None,
             "consider_multimajor": True,
@@ -51,6 +52,8 @@ def test_analyze_returns_full_dashboard():
     all_recs = dash.card_a.major + dash.card_a.general + dash.card_a.candidates
     assert all(not _re.fullmatch(r"[A-Z]{2,4}G\d{3}", c.course_id) for c in all_recs)
     assert all("캡스톤" not in c.course_name for c in all_recs)
+    all_recs = dash.card_a.major + dash.card_a.candidates
+    assert any(c.course_id.startswith("CSE") for c in all_recs), "복수전공(컴공) 과목이 전공 후보에 없음"
 
 
 def test_health():

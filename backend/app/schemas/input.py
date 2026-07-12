@@ -10,6 +10,9 @@ from pydantic import BaseModel, Field
 class StudentInput(BaseModel):
     student_id: str = Field(..., description="학번")
     department: str = Field(..., description="학과/학부 원문 그대로")
+    extra_majors: list[str] = Field(
+        default_factory=list, description="복수전공 학과/학부 원문 목록"
+    )
     taken_course_ids: list[str] = Field(default_factory=list, description="이수 완료 과목 ID")
     interest_career: str | None = Field(None, description="관심 진로 (드롭다운)")
     consider_multimajor: bool = Field(False, description="다전공 고려 여부")

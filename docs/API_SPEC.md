@@ -13,6 +13,7 @@
 |---|---|---|
 | `student_id` | string | 학번 |
 | `department` | string | 학과/학부 원문 |
+| `extra_majors` | string[] | 복수전공 학과/학부 원문 (기본 `[]`) |
 | `taken_course_ids` | string[] | 이수 완료 과목 ID |
 | `interest_career` | string \| null | 관심 진로 (드롭다운) |
 | `consider_multimajor` | bool | 다전공 고려 여부 |
