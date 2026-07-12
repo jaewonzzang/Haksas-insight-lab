@@ -12,6 +12,8 @@ export interface StudentInput {
   department: string;
   /** 복수전공 학과/학부 원문 목록 (기본 []) */
   extra_majors: string[];
+  /** 학년 1~4. null이면 수강학년 필터·학년 적합도 생략 */
+  year: number | null;
   taken_course_ids: string[];
   interest_career?: string | null;
   consider_multimajor: boolean;

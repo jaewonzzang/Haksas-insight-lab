@@ -23,6 +23,7 @@ export function buildStudentInput(profile: DemoProfile, form: AnalysisForm): Stu
     student_id: profile.id,
     department: profile.primaryMajor,
     extra_majors: profile.extraMajors,
+    year: profile.year,
     taken_course_ids: profile.takenCourses.map((c) => c.id),
     interest_career: form.interest_career,
     consider_multimajor: form.consider_multimajor,
