@@ -10,6 +10,8 @@ export type RecommendationGrade = "강추" | "고려" | "유보";
 export interface StudentInput {
   student_id: string;
   department: string;
+  /** 복수전공 학과/학부 원문 목록 (기본 []) */
+  extra_majors: string[];
   taken_course_ids: string[];
   interest_career?: string | null;
   consider_multimajor: boolean;
