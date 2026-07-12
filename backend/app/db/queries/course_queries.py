@@ -29,10 +29,15 @@ def list_by_ids(
 
 
 def offered_in_semester(con: sqlite3.Connection, semester: int) -> set[str]:
-    """해당 학기(1|2)에 개설 이력이 있는 course_id 집합 (연도 무관)."""
+    """가장 최근 연도의 해당 학기(1|2)에 개설된 course_id 집합.
+
+    연도 무관 이력을 쓰면 폐강 과목이 섞인다(2026-07-12 확인: 2024-2에만
+    개설된 216과목이 2026-2 추천 풀에 오염) — 최신 연도 학기로 한정.
+    """
     rows = con.execute(
-        "SELECT DISTINCT course_id FROM course_offerings WHERE semester = ?",
-        (semester,),
+        "SELECT DISTINCT course_id FROM course_offerings WHERE semester = ? "
+        "AND year = (SELECT MAX(year) FROM course_offerings WHERE semester = ?)",
+        (semester, semester),
     ).fetchall()
     return {r["course_id"] for r in rows}
 
