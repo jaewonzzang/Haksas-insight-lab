@@ -17,11 +17,11 @@ export interface AnalysisForm {
 }
 
 // 데모 프로필 + 입력 폼 → POST /analyze 요청 본문.
-// department는 분석용 원문(analysisDepartment) — 헤더 표시 문자열과 분리 (2026-07-12 버그 수정).
+// department = 1전공 원문(primaryMajor), extra_majors = 2전공 이하 — 헤더 표시 문자열과 분리.
 export function buildStudentInput(profile: DemoProfile, form: AnalysisForm): StudentInput {
   return {
     student_id: profile.id,
-    department: profile.analysisDepartment,
+    department: profile.primaryMajor,
     extra_majors: profile.extraMajors,
     taken_course_ids: profile.takenCourses.map((c) => c.id),
     interest_career: form.interest_career,
@@ -56,7 +56,7 @@ export function useAnalysis(): UseAnalysis {
       setPhase("loading");
       try {
         const result = await analyze(buildStudentInput(selected, form), selected.dashboard);
-        // 실모드에서 백엔드는 name/year를 모른다(SAINT 연계 전) — 데모 헤더를 병합.
+        // 실모드에서 백엔드는 name/year/gpa를 모른다(SAINT 연계 전) — 데모 학생 데이터를 병합.
         // mock 모드에서는 동일 값이라 no-op.
         const merged: DashboardResponse = {
           ...result,
@@ -66,6 +66,7 @@ export function useAnalysis(): UseAnalysis {
             department: selected.dashboard.profile.department,
             year: selected.dashboard.profile.year,
           },
+          kpi: { ...result.kpi, gpa: selected.gpa },
         };
         setData(merged);
         setPhase("dashboard");
