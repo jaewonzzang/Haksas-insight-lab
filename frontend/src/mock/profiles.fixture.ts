@@ -11,6 +11,8 @@ export interface DemoProfile {
   id: string;
   label: string;
   available: boolean; // 데이터 준비 여부 (A만 true)
+  analysisDepartment: string; // 분석용 학과/학부 원문 (백엔드 dept_normalizer 키) — 헤더 표시용과 별개
+  extraMajors: string[]; // 복수전공 학과 원문
   takenCourses: TakenCourse[]; // 이수과목 데이터 공간
   dashboard: DashboardResponse; // 분석 결과 (헤더 개인정보 포함)
 }
@@ -34,8 +36,16 @@ function emptyDashboard(name: string): DashboardResponse {
 }
 
 export const profiles: DemoProfile[] = [
-  { id: "A", label: "학생 A", available: true, takenCourses, dashboard: mockDashboard },
-  { id: "B", label: "학생 B", available: false, takenCourses: [], dashboard: emptyDashboard("학생 B") },
-  { id: "C", label: "학생 C", available: false, takenCourses: [], dashboard: emptyDashboard("학생 C") },
-  { id: "D", label: "학생 D", available: false, takenCourses: [], dashboard: emptyDashboard("학생 D") },
+  {
+    id: "A",
+    label: "학생 A",
+    available: true,
+    analysisDepartment: "지식융합미디어학부",
+    extraMajors: ["컴퓨터공학과"],
+    takenCourses,
+    dashboard: mockDashboard,
+  },
+  { id: "B", label: "학생 B", available: false, analysisDepartment: "", extraMajors: [], takenCourses: [], dashboard: emptyDashboard("학생 B") },
+  { id: "C", label: "학생 C", available: false, analysisDepartment: "", extraMajors: [], takenCourses: [], dashboard: emptyDashboard("학생 C") },
+  { id: "D", label: "학생 D", available: false, analysisDepartment: "", extraMajors: [], takenCourses: [], dashboard: emptyDashboard("학생 D") },
 ];

@@ -17,10 +17,12 @@ export interface AnalysisForm {
 }
 
 // 데모 프로필 + 입력 폼 → POST /analyze 요청 본문.
+// department는 분석용 원문(analysisDepartment) — 헤더 표시 문자열과 분리 (2026-07-12 버그 수정).
 export function buildStudentInput(profile: DemoProfile, form: AnalysisForm): StudentInput {
   return {
     student_id: profile.id,
-    department: profile.dashboard.profile.department,
+    department: profile.analysisDepartment,
+    extra_majors: profile.extraMajors,
     taken_course_ids: profile.takenCourses.map((c) => c.id),
     interest_career: form.interest_career,
     consider_multimajor: form.consider_multimajor,
@@ -61,6 +63,7 @@ export function useAnalysis(): UseAnalysis {
           profile: {
             ...result.profile,
             name: selected.dashboard.profile.name,
+            department: selected.dashboard.profile.department,
             year: selected.dashboard.profile.year,
           },
         };
