@@ -42,6 +42,19 @@ def offered_in_semester(con: sqlite3.Connection, semester: int) -> set[str]:
     return {r["course_id"] for r in rows}
 
 
+def syllabus_attrs(
+    con: sqlite3.Connection, course_ids: Sequence[str]
+) -> dict[str, sqlite3.Row]:
+    """course_syllabi 속성 (강의계획서 병합분만 존재 — 부분 커버리지)."""
+    if not course_ids:
+        return {}
+    marks = ", ".join("?" for _ in course_ids)
+    rows = con.execute(
+        f"SELECT * FROM course_syllabi WHERE course_id IN ({marks})", tuple(course_ids)
+    ).fetchall()
+    return {r["course_id"]: r for r in rows}
+
+
 def get_course(con: sqlite3.Connection, course_id: str) -> Optional[sqlite3.Row]:
     return con.execute(
         "SELECT * FROM courses WHERE course_id = ?", (course_id,)

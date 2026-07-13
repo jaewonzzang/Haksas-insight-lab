@@ -15,6 +15,7 @@ from app.engines.recommender import (
     collaborative,
     content_based,
     hybrid,
+    preference,
     prereq_filter,
     restriction_filter,
 )
@@ -86,12 +87,21 @@ def build(
 
     signals_by_label: dict[str, dict[str, float]] = {}
     taken_rows = course_queries.list_by_ids(con, sorted(taken))
-    content = content_based.score(taken_rows, pool)
+    # 강의계획서 속성 (부분 커버리지) — 개요는 콘텐츠 신호에, 팀플·출석은 선호 매칭에
+    attrs = course_queries.syllabus_attrs(con, [*pool_ids, *sorted(taken)])
+    overviews = {cid: a["overview_text"] for cid, a in attrs.items() if a["overview_text"]}
+    content = content_based.score(taken_rows, pool, overviews)
     if content:
         signals_by_label["콘텐츠 유사도"] = content
     collab = collaborative.score(taken, pool_ids, alumni)
     if collab:
         signals_by_label["코호트 선호도"] = collab
+    pool_attrs = {cid: attrs[cid] for cid in pool_ids if cid in attrs}
+    pref = preference.score(
+        student.prefer_team_project, student.prefer_low_attendance, pool_attrs
+    )
+    if pref:
+        signals_by_label["사용자 선호 매칭"] = pref
     if student.year is not None:
         signals_by_label["학년 적합도"] = {
             r["course_id"]: year_rules.year_fit_score(

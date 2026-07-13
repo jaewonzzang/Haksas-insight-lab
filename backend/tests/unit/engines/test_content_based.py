@@ -33,3 +33,12 @@ def test_no_text_returns_empty():
     taken = [_row("X1", "", None)]
     pool = [_row("Y1", "", None)]
     assert content_based.score(taken, pool) == {}
+
+
+def test_overview_text_changes_similarity():
+    # 강의계획서 개요 결합 (2026-07-13) — 개요가 있으면 유사도에 반영된다
+    taken = [_row("T1", "운영체제", "")]
+    pool = [_row("P1", "과목갑", ""), _row("P2", "과목을", "")]
+    overviews = {"P1": "운영체제 프로세스 스케줄링 심화", "P2": "르네상스 미술사 개관"}
+    out = content_based.score(taken, pool, overviews)
+    assert out["P1"] > out["P2"]
