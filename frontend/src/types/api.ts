@@ -14,6 +14,12 @@ export interface StudentInput {
   extra_majors: string[];
   /** 학년 1~4. null이면 수강학년 필터·학년 적합도 생략 */
   year: number | null;
+  /** 팀플레이 선호 */
+  prefer_team_project: boolean;
+  /** S/U 평가 선호 — 백엔드 신호 재료 없음(전송만) */
+  prefer_su_eval: boolean;
+  /** 출석(참여도) 비중 낮음 선호 */
+  prefer_low_attendance: boolean;
   taken_course_ids: string[];
   interest_career?: string | null;
   consider_multimajor: boolean;

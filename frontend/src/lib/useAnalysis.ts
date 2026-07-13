@@ -14,6 +14,9 @@ export type Phase = "profile" | "input" | "loading" | "dashboard" | "error";
 export interface AnalysisForm {
   interest_career: string | null; // "미정"은 null
   consider_multimajor: boolean;
+  prefer_team_project: boolean;
+  prefer_su_eval: boolean;
+  prefer_low_attendance: boolean;
 }
 
 // 데모 프로필 + 입력 폼 → POST /analyze 요청 본문.
@@ -27,6 +30,9 @@ export function buildStudentInput(profile: DemoProfile, form: AnalysisForm): Stu
     taken_course_ids: profile.takenCourses.map((c) => c.id),
     interest_career: form.interest_career,
     consider_multimajor: form.consider_multimajor,
+    prefer_team_project: form.prefer_team_project,
+    prefer_su_eval: form.prefer_su_eval,
+    prefer_low_attendance: form.prefer_low_attendance,
   };
 }
 

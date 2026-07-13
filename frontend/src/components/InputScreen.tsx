@@ -28,7 +28,11 @@ const FREE_AREAS = [
   { label: "윤리·사상", on: false },
   { label: "문명·역사", on: false },
 ];
-const PREFS = ["팀플레이 선호", "S/U 평가 선호", "출석 비중 낮음 선호"];
+const PREFS = [
+  { key: "prefer_team_project", label: "팀플레이 선호" },
+  { key: "prefer_su_eval", label: "S/U 평가 선호" },
+  { key: "prefer_low_attendance", label: "출석 비중 낮음 선호" },
+] as const;
 const CAREERS = ["대학원", "취업", "미정"] as const;
 
 function StaticChk({ label, defaultChecked }: { label: string; defaultChecked?: boolean }) {
@@ -54,12 +58,18 @@ function PickChk({ label, checked, onChange }: { label: string; checked: boolean
 export default function InputScreen({ onSubmit, onBack }: Props) {
   const [career, setCareer] = useState<(typeof CAREERS)[number]>("대학원");
   const [multimajor, setMultimajor] = useState<"yes" | "no">("yes");
+  const [prefs, setPrefs] = useState<Record<(typeof PREFS)[number]["key"], boolean>>({
+    prefer_team_project: true,
+    prefer_su_eval: true,
+    prefer_low_attendance: true,
+  }); // 기존 defaultChecked(전부 켬)와 동일한 초기값
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     onSubmit({
       interest_career: career === "미정" ? null : career,
       consider_multimajor: multimajor === "yes",
+      ...prefs,
     });
   }
 
@@ -102,7 +112,12 @@ export default function InputScreen({ onSubmit, onBack }: Props) {
               <div className="input-group-label">추가 선호</div>
               <div className="check-row">
                 {PREFS.map((p) => (
-                  <StaticChk key={p} label={p} defaultChecked />
+                  <PickChk
+                    key={p.key}
+                    label={p.label}
+                    checked={prefs[p.key]}
+                    onChange={() => setPrefs((s) => ({ ...s, [p.key]: !s[p.key] }))}
+                  />
                 ))}
               </div>
               <div className="input-group-label" style={{ marginTop: 14 }}>
