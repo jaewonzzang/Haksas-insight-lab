@@ -87,6 +87,28 @@ def extract_prerequisites(text: str, lang: str) -> str:
 
 
 # ─────────────────────────────────────────
+# 3-1. 수업 개요 추출 (콘텐츠 유사도 신호용, 2026-07-13)
+# ─────────────────────────────────────────
+
+def extract_overview(text: str, lang: str) -> str:
+    """"교과목 개요"/"수업개요"(ko) 또는 "Course Overview"(en) 섹션 본문."""
+    if lang == "ko":
+        match = re.search(
+            r"(?:교과목 개요|수업개요)\s*\n+(.*?)(?=\n\s*\d+\.\s|\n\s*선수학습내용|\n\s*Ⅱ\.)",
+            text, re.DOTALL,
+        )
+    else:
+        match = re.search(
+            r"Course\s*Overview\s*\n+(.*?)(?=\n\s*\d+\.\s|\n\s*Prerequisite|\n\s*II\.)",
+            text, re.DOTALL | re.IGNORECASE,
+        )
+    if not match:
+        return ""
+    lines = [l.strip() for l in match.group(1).splitlines()]
+    return "\n".join(l for l in lines if l).strip()
+
+
+# ─────────────────────────────────────────
 # 4. 수업방법 표 파싱 (팀플 추출용)
 # ─────────────────────────────────────────
 
@@ -361,6 +383,7 @@ def parse_syllabus(pdf_path: str) -> dict:
     "language": lang,
     **basic,
     "prerequisites_raw": prerequisites,   # ← 이름 변경
+    "overview_text": extract_overview(text, lang),
     "course_format": course_format,
     "evaluation": evaluation,
     "team_project": team_project,
