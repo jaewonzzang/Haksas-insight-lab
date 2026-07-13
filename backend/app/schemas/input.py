@@ -16,6 +16,9 @@ class StudentInput(BaseModel):
     year: int | None = Field(
         None, ge=1, le=4, description="학년 (1~4). None이면 수강학년 필터·학년 적합도 생략"
     )
+    prefer_team_project: bool = Field(False, description="팀플레이 선호")
+    prefer_su_eval: bool = Field(False, description="S/U 평가 선호 — 재료 없음, 현재 신호 미사용")
+    prefer_low_attendance: bool = Field(False, description="출석(참여도) 비중 낮음 선호")
     taken_course_ids: list[str] = Field(default_factory=list, description="이수 완료 과목 ID")
     interest_career: str | None = Field(None, description="관심 진로 (드롭다운)")
     consider_multimajor: bool = Field(False, description="다전공 고려 여부")
