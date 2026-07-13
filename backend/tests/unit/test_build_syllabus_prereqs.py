@@ -2,7 +2,7 @@
 
 import sqlite3
 
-from scripts.build_syllabus_prereqs import merge_syllabus_prereqs
+from scripts.build_syllabus_prereqs import merge_syllabus_attrs, merge_syllabus_prereqs
 
 
 def _db() -> sqlite3.Connection:
@@ -50,6 +50,29 @@ def test_merge_counts_unparsed_free_text():
     )
     assert stats["inserted"] == 0
     assert stats["unparsed"] + stats["no_prereq"] >= 1  # 파서가 트리를 못 만들면 삽입하지 않는다
+
+
+def test_attrs_upsert_and_replace():
+    con = _db()
+    recs = [{
+        "course_id": "CSE4070", "overview_text": "운영체제의 구조와 원리",
+        "team_project": "none", "attendance_ratio": 0.1, "file": "a.pdf",
+    }]
+    stats = merge_syllabus_attrs(con, recs)
+    assert stats["upserted"] == 1
+    # 같은 과목 재병합(최신 계획서) → 교체
+    recs[0]["overview_text"] = "개정판 개요"
+    merge_syllabus_attrs(con, recs)
+    row = con.execute(
+        "SELECT overview_text, team_project FROM course_syllabi WHERE course_id='CSE4070'"
+    ).fetchone()
+    assert row == ("개정판 개요", "none")
+
+
+def test_attrs_unknown_course_skipped():
+    con = _db()
+    stats = merge_syllabus_attrs(con, [{"course_id": "NOPE999", "overview_text": "x"}])
+    assert stats["upserted"] == 0 and stats["no_course"] == 1
 
 
 def test_no_prereq_phrases_detected():

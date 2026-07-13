@@ -95,6 +95,19 @@ CREATE TABLE course_prerequisites (
 );
 
 -- ============================================================
+-- course_syllabi : 강의계획서 병합 속성 (개요·팀플·출석)
+--   적재는 scripts/build_syllabus_prereqs.py (강의계획서 JSON 병합, 가변)
+-- ============================================================
+CREATE TABLE course_syllabi (
+    course_id        TEXT PRIMARY KEY,
+    overview_text    TEXT,
+    team_project     TEXT,   -- "required" | "optional" | "none"
+    attendance_ratio REAL,   -- 참여도 비중 0.0~1.0
+    source_file      TEXT,
+    FOREIGN KEY (course_id) REFERENCES courses(course_id)
+);
+
+-- ============================================================
 -- course_aliases : 옛 코드 / 대체과목 별칭 (단방향)
 --   의미: old_* 이수 -> new_course_id 이수로 간주
 -- ============================================================

@@ -48,6 +48,17 @@ CREATE TABLE course_offerings (
 
 **파싱 규칙**: 콤마=AND, `또는`/`or`=OR, 괄호=OR 그룹. 과목코드 정규식 `[A-Z]{2,5}\d{3,4}[A-Z]?`.
 
+### `course_syllabi` — 강의계획서 병합 속성 (행수 가변 — 병합 실행에 따름)
+| 컬럼 | 타입 | 비고 |
+|---|---|---|
+| `course_id` | TEXT PK / FK | |
+| `overview_text` | TEXT | 수업 개요 — 콘텐츠 유사도 신호에 결합 |
+| `team_project` | TEXT | `required`/`optional`/`none` — 선호 매칭 |
+| `attendance_ratio` | REAL | 참여도 비중 0.0~1.0 — 선호 매칭 |
+| `source_file` | TEXT | 원본 PDF 파일명 |
+
+**적재**: `scripts/syllabus_parser.py`(PDF→JSON) → `scripts/build_syllabus_prereqs.py`(JSON→선수트리+본 테이블 upsert, 과목당 1행 최신 우선). 2026-07-13 신설.
+
 예: `"ECO2001, ECO2003(또는 STS2005 또는 STS2006)"` →
 
 ```json

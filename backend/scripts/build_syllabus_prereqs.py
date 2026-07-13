@@ -89,8 +89,42 @@ def merge_syllabus_prereqs(
     return stats
 
 
+_SYLLABI_DDL = (
+    "CREATE TABLE IF NOT EXISTS course_syllabi ("
+    "course_id TEXT PRIMARY KEY, overview_text TEXT, team_project TEXT, "
+    "attendance_ratio REAL, source_file TEXT)"
+)
+
+
+def merge_syllabus_attrs(con: sqlite3.Connection, records: list[dict]) -> dict[str, int]:
+    """개요·팀플·출석 속성 upsert (과목당 1행, 재실행 시 최신 계획서로 교체)."""
+    con.execute(_SYLLABI_DDL)
+    known = {r[0] for r in con.execute("SELECT course_id FROM courses")}
+    stats = {"upserted": 0, "no_course": 0}
+    for rec in records:
+        cid = _resolve_course_id(con, rec)
+        if not cid or cid not in known:
+            stats["no_course"] += 1
+            continue
+        con.execute(
+            "INSERT OR REPLACE INTO course_syllabi VALUES (?, ?, ?, ?, ?)",
+            (
+                cid,
+                (rec.get("overview_text") or "").strip(),
+                rec.get("team_project") or "none",
+                float(rec.get("attendance_ratio") or 0.0),
+                rec.get("file") or "",
+            ),
+        )
+        stats["upserted"] += 1
+    con.commit()
+    return stats
+
+
 def main() -> None:
-    ap = argparse.ArgumentParser(description="강의계획서 선수과목 → course_prerequisites 병합")
+    ap = argparse.ArgumentParser(
+        description="강의계획서 선수과목 + 속성(개요·팀플·출석) → DB 병합"
+    )
     ap.add_argument("--input", required=True, help="syllabus_parser.py 출력 JSON 경로")
     ap.add_argument("--db", default=str(config.DB_PATH))
     args = ap.parse_args()
@@ -98,10 +132,12 @@ def main() -> None:
     records = json.loads(Path(args.input).read_text(encoding="utf-8"))
     con = sqlite3.connect(args.db)
     try:
-        stats = merge_syllabus_prereqs(con, records)
+        prereq_stats = merge_syllabus_prereqs(con, records)
+        attr_stats = merge_syllabus_attrs(con, records)
     finally:
         con.close()
-    print(stats)
+    print("prereq:", prereq_stats)
+    print("attrs:", attr_stats)
 
 
 if __name__ == "__main__":
