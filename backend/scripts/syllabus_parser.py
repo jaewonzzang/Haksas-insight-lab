@@ -19,25 +19,49 @@ import re
 import json
 import argparse
 import subprocess
+import tempfile
 from pathlib import Path
 
-# Poppler pdftotext 경로 (PATH에 잡혀 있으면 'pdftotext'만 써도 됨)
-PDFTOTEXT_PATH = r"C:\Users\김재원\AppData\Local\Microsoft\WinGet\Packages\oschwartz10612.Poppler_Microsoft.Winget.Source_8wekyb3d8bbwe\poppler-25.07.0\Library\bin\pdftotext.exe"
+# Poppler 경로 (PATH에 잡혀 있으면 실행파일명만 써도 됨)
+_POPPLER_BIN = r"C:\Users\김재원\AppData\Local\Microsoft\WinGet\Packages\oschwartz10612.Poppler_Microsoft.Winget.Source_8wekyb3d8bbwe\poppler-25.07.0\Library\bin"
+PDFTOTEXT_PATH = _POPPLER_BIN + r"\pdftotext.exe"
+PDFTOPPM_PATH = _POPPLER_BIN + r"\pdftoppm.exe"
+# 이미지형 PDF OCR 폴백 (tesseract + 프로젝트 로컬 한/영 언어데이터)
+TESSERACT_PATH = r"C:\msys64\mingw64\bin\tesseract.exe"
+TESSDATA_DIR = str(Path(__file__).resolve().parent / "tessdata")
 
 
 # ─────────────────────────────────────────
-# 1. PDF → 텍스트 (Poppler -layout 모드)
+# 1. PDF → 텍스트 (Poppler -layout 모드, 이미지형은 OCR 폴백)
 # ─────────────────────────────────────────
+
+def _ocr_pdf(pdf_path: str) -> str:
+    """이미지형 PDF 폴백: 페이지 렌더링(pdftoppm 300dpi) → OCR(tesseract kor+eng)."""
+    with tempfile.TemporaryDirectory() as tmp:
+        subprocess.run(
+            [PDFTOPPM_PATH, "-png", "-r", "300", pdf_path, os.path.join(tmp, "p")],
+            capture_output=True, check=False,
+        )
+        pages = []
+        for png in sorted(Path(tmp).glob("p*.png")):
+            r = subprocess.run(
+                [TESSERACT_PATH, str(png), "stdout", "-l", "kor+eng",
+                 "--tessdata-dir", TESSDATA_DIR],
+                capture_output=True, check=False,
+            )
+            pages.append(r.stdout.decode("utf-8", errors="ignore"))
+    return "\n".join(pages)
+
 
 def pdf_to_text(pdf_path: str) -> str:
-    """Poppler pdftotext로 표 레이아웃 유지하며 텍스트 추출."""
+    """Poppler pdftotext로 표 레이아웃 유지하며 텍스트 추출. 빈 텍스트(이미지형)면 OCR 폴백."""
     result = subprocess.run(
         [PDFTOTEXT_PATH, "-layout", "-enc", "UTF-8", pdf_path, "-"],
         capture_output=True,
         check=False
     )
-    # stdout이 bytes → UTF-8 디코딩
-    return result.stdout.decode("utf-8", errors="ignore")
+    text = result.stdout.decode("utf-8", errors="ignore")
+    return text if text.strip() else _ocr_pdf(pdf_path)
 
 
 # ─────────────────────────────────────────
@@ -363,6 +387,12 @@ def extract_basic_info(text: str, lang: str) -> dict:
 # 8. 단일 PDF 처리
 # ─────────────────────────────────────────
 
+def _course_id_from_filename(name: str) -> str | None:
+    """새 배치 파일명(YYYY-학기-과목코드-분반.PDF)에서 과목코드 추출. 매칭 안 되면 None → 텍스트 추출로 후퇴."""
+    m = re.match(r"^\d{4}-\d{3}-([A-Z]{2,5}\d{3,4})-\d+\.pdf$", name, re.IGNORECASE)
+    return m.group(1) if m else None
+
+
 def parse_syllabus(pdf_path: str) -> dict:
     print(f"  처리 중: {os.path.basename(pdf_path)}")
     try:
@@ -372,6 +402,9 @@ def parse_syllabus(pdf_path: str) -> dict:
 
         lang = detect_language(text)
         basic = extract_basic_info(text, lang)
+        fn_code = _course_id_from_filename(os.path.basename(pdf_path))
+        if fn_code:
+            basic["course_id"] = fn_code
         prerequisites = extract_prerequisites(text, lang)
         course_format = parse_course_format_table(text, lang)
         evaluation = parse_evaluation_table(text, lang)

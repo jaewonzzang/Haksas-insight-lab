@@ -22,6 +22,9 @@ dist/
 .env.local
 .env.*.local
 
+# OCR 언어데이터 (tesseract kor/eng traineddata — 스크립트 로컬 자산)
+backend/scripts/tessdata/
+
 # 데이터 (구조만 .gitkeep 으로 유지)
 backend/data/raw/*
 backend/data/processed/*
