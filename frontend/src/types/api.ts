@@ -20,6 +20,8 @@ export interface StudentInput {
   prefer_su_eval: boolean;
   /** 출석(참여도) 비중 낮음 선호 */
   prefer_low_attendance: boolean;
+  /** 발표 있는 과목 선호 */
+  prefer_presentation: boolean;
   taken_course_ids: string[];
   interest_career?: string | null;
   consider_multimajor: boolean;

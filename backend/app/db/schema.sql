@@ -103,6 +103,7 @@ CREATE TABLE course_syllabi (
     overview_text    TEXT,
     team_project     TEXT,   -- "required" | "optional" | "none"
     attendance_ratio REAL,   -- 참여도 비중 0.0~1.0
+    presentation_ratio REAL, -- 성적 발표 배점 비율 0.0~1.0
     source_file      TEXT,
     FOREIGN KEY (course_id) REFERENCES courses(course_id)
 );

@@ -19,6 +19,7 @@ class StudentInput(BaseModel):
     prefer_team_project: bool = Field(False, description="팀플레이 선호")
     prefer_su_eval: bool = Field(False, description="S/U 평가 선호 — 재료 없음, 현재 신호 미사용")
     prefer_low_attendance: bool = Field(False, description="출석(참여도) 비중 낮음 선호")
+    prefer_presentation: bool = Field(False, description="발표 있는 과목 선호 — 선호 매칭 요인")
     taken_course_ids: list[str] = Field(default_factory=list, description="이수 완료 과목 ID")
     interest_career: str | None = Field(None, description="관심 진로 (드롭다운)")
     consider_multimajor: bool = Field(False, description="다전공 고려 여부")

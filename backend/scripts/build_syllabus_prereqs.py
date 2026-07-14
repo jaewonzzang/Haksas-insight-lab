@@ -92,7 +92,7 @@ def merge_syllabus_prereqs(
 _SYLLABI_DDL = (
     "CREATE TABLE IF NOT EXISTS course_syllabi ("
     "course_id TEXT PRIMARY KEY, overview_text TEXT, team_project TEXT, "
-    "attendance_ratio REAL, source_file TEXT)"
+    "attendance_ratio REAL, presentation_ratio REAL, source_file TEXT)"
 )
 
 
@@ -107,12 +107,13 @@ def merge_syllabus_attrs(con: sqlite3.Connection, records: list[dict]) -> dict[s
             stats["no_course"] += 1
             continue
         con.execute(
-            "INSERT OR REPLACE INTO course_syllabi VALUES (?, ?, ?, ?, ?)",
+            "INSERT OR REPLACE INTO course_syllabi VALUES (?, ?, ?, ?, ?, ?)",
             (
                 cid,
                 (rec.get("overview_text") or "").strip(),
                 rec.get("team_project") or "none",
                 float(rec.get("attendance_ratio") or 0.0),
+                round(float(rec.get("presentation_ratio") or 0.0), 2),
                 rec.get("file") or "",
             ),
         )

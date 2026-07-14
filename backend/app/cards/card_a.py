@@ -98,7 +98,10 @@ def build(
         signals_by_label["코호트 선호도"] = collab
     pool_attrs = {cid: attrs[cid] for cid in pool_ids if cid in attrs}
     pref = preference.score(
-        student.prefer_team_project, student.prefer_low_attendance, pool_attrs
+        student.prefer_team_project,
+        student.prefer_low_attendance,
+        student.prefer_presentation,
+        pool_attrs,
     )
     if pref:
         signals_by_label["사용자 선호 매칭"] = pref

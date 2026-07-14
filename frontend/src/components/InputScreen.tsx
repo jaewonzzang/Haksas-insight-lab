@@ -32,6 +32,7 @@ const PREFS = [
   { key: "prefer_team_project", label: "팀플레이 선호" },
   { key: "prefer_su_eval", label: "S/U 평가 선호" },
   { key: "prefer_low_attendance", label: "출석 비중 낮음 선호" },
+  { key: "prefer_presentation", label: "발표 있는 과목 선호" },
 ] as const;
 const CAREERS = ["대학원", "취업", "미정"] as const;
 
@@ -62,6 +63,7 @@ export default function InputScreen({ onSubmit, onBack }: Props) {
     prefer_team_project: true,
     prefer_su_eval: true,
     prefer_low_attendance: true,
+    prefer_presentation: true,
   }); // 기존 defaultChecked(전부 켬)와 동일한 초기값
 
   function handleSubmit(e: FormEvent) {

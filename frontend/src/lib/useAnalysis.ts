@@ -17,6 +17,7 @@ export interface AnalysisForm {
   prefer_team_project: boolean;
   prefer_su_eval: boolean;
   prefer_low_attendance: boolean;
+  prefer_presentation: boolean;
 }
 
 // 데모 프로필 + 입력 폼 → POST /analyze 요청 본문.
@@ -33,6 +34,7 @@ export function buildStudentInput(profile: DemoProfile, form: AnalysisForm): Stu
     prefer_team_project: form.prefer_team_project,
     prefer_su_eval: form.prefer_su_eval,
     prefer_low_attendance: form.prefer_low_attendance,
+    prefer_presentation: form.prefer_presentation,
   };
 }
 

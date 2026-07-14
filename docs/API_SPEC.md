@@ -18,6 +18,7 @@
 | `prefer_team_project` | bool | 팀플레이 선호 — 선호 매칭 요인 |
 | `prefer_su_eval` | bool | S/U 평가 선호 — **현재 신호 미사용** (재료 없음) |
 | `prefer_low_attendance` | bool | 출석(참여도) 비중 낮음 선호 — 선호 매칭 요인 |
+| `prefer_presentation` | bool | 발표 있는 과목 선호 — 선호 매칭 요인 |
 | `taken_course_ids` | string[] | 이수 완료 과목 ID |
 | `interest_career` | string \| null | 관심 진로 (드롭다운) |
 | `consider_multimajor` | bool | 다전공 고려 여부 |

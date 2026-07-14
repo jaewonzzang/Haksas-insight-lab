@@ -19,12 +19,21 @@ def _low_attendance(ratio: float) -> float:
     return 0.0
 
 
+def _presentation(ratio: float) -> float:
+    if ratio >= 0.20:
+        return 100.0
+    if ratio > 0:
+        return 50.0
+    return 0.0
+
+
 def score(
     prefer_team_project: bool,
     prefer_low_attendance: bool,
+    prefer_presentation: bool,
     attrs_by_id: Mapping[str, Mapping],
 ) -> dict[str, float]:
-    if not (prefer_team_project or prefer_low_attendance):
+    if not (prefer_team_project or prefer_low_attendance or prefer_presentation):
         return {}
     out: dict[str, float] = {}
     for cid, a in attrs_by_id.items():
@@ -33,5 +42,7 @@ def score(
             parts.append(_team(a["team_project"]))
         if prefer_low_attendance:
             parts.append(_low_attendance(a["attendance_ratio"]))
+        if prefer_presentation:
+            parts.append(_presentation(a["presentation_ratio"]))
         out[cid] = round(sum(parts) / len(parts), 1)
     return out

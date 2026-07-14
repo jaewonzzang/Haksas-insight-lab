@@ -129,7 +129,8 @@ def extract_overview(text: str, lang: str) -> str:
     if not match:
         return ""
     lines = [l.strip() for l in match.group(1).splitlines()]
-    return "\n".join(l for l in lines if l).strip()
+    # 종료 경계 미매칭 시 문서 끝까지 캡처되는 것 방지 — 개요 1~2문단이면 충분
+    return "\n".join(l for l in lines if l).strip()[:500]
 
 
 # ─────────────────────────────────────────
@@ -421,6 +422,7 @@ def parse_syllabus(pdf_path: str) -> dict:
     "evaluation": evaluation,
     "team_project": team_project,
     "attendance_ratio": attendance_ratio,
+    "presentation_ratio": round(evaluation.get("presentation", 0) / 100, 2),
     "parse_error": None
 }
     except Exception as e:
