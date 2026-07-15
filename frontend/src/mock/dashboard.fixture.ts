@@ -17,7 +17,6 @@ const major: RecommendedCourse[] = [
     factors: [
       { label: "콘텐츠 유사도", weight_percent: 88, contribution: "+26", kind: "pos" },
       { label: "코호트 선호도", weight_percent: 78, contribution: "+24", kind: "pos" },
-      { label: "시간 가중 평점", weight_percent: 75, contribution: "+22", kind: "pos" },
       { label: "사용자 선호 매칭", weight_percent: 60, contribution: "+12", kind: "pos" },
       { label: "트랙 충족도", weight_percent: 0, contribution: "N/A", kind: "na" },
       { label: "학년 적합도", weight_percent: 70, contribution: "+8", kind: "pos" },
@@ -87,7 +86,6 @@ const general: RecommendedCourse[] = [
       { label: "트랙 충족도", weight_percent: 100, contribution: "+34", kind: "pos" },
       { label: "사용자 선호 매칭", weight_percent: 80, contribution: "+22", kind: "pos" },
       { label: "코호트 선호도", weight_percent: 65, contribution: "+18", kind: "pos" },
-      { label: "시간 가중 평점", weight_percent: 50, contribution: "+14", kind: "pos" },
     ],
     why_summary: "공통선택 ④ 인간과 과학 & AI 영역이 미이수 상태이며, S/U 평가 옵션이 제공됩니다.",
   },
