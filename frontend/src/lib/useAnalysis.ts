@@ -1,4 +1,4 @@
-// 화면 흐름 상태머신: 프로필 선택 → 입력 → 로딩 → 대시보드.
+// 화면 흐름 상태머신: 로그인 → 프로필 선택 → 입력 → 로딩 → 대시보드.
 // 선택한 프로필의 데이터(헤더 개인정보 포함)를 대시보드에 주입.
 // 분석은 lib/api.analyze 경유 — mock 모드는 프로필별 대시보드를 override로 유지.
 
@@ -8,7 +8,7 @@ import { analyze } from "./api";
 import type { DemoProfile } from "../mock/profiles.fixture";
 import type { DashboardResponse, StudentInput } from "../types/api";
 
-export type Phase = "profile" | "input" | "loading" | "dashboard" | "error";
+export type Phase = "login" | "profile" | "input" | "loading" | "dashboard" | "error";
 
 // 입력 화면에서 수집하는 분석 조건. StudentInput의 사용자 선택 필드에 대응.
 export interface AnalysisForm {
@@ -42,6 +42,7 @@ export interface UseAnalysis {
   phase: Phase;
   data: DashboardResponse | null;
   error: string | null;
+  login: () => void;
   selectProfile: (profile: DemoProfile) => void;
   run: (form: AnalysisForm) => Promise<void>;
   reset: () => void;
@@ -49,10 +50,12 @@ export interface UseAnalysis {
 }
 
 export function useAnalysis(): UseAnalysis {
-  const [phase, setPhase] = useState<Phase>("profile");
+  const [phase, setPhase] = useState<Phase>("login");
   const [selected, setSelected] = useState<DemoProfile | null>(null);
   const [data, setData] = useState<DashboardResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const login = useCallback(() => setPhase("profile"), []);
 
   const selectProfile = useCallback((profile: DemoProfile) => {
     setSelected(profile);
@@ -99,5 +102,5 @@ export function useAnalysis(): UseAnalysis {
     setPhase("input");
   }, []);
 
-  return { phase, data, error, selectProfile, run, reset, backToInput };
+  return { phase, data, error, login, selectProfile, run, reset, backToInput };
 }

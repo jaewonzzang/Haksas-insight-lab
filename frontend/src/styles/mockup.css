@@ -775,6 +775,52 @@
   .profile-grid { grid-template-columns: 1fr; }
 }
 
+/* ===== SAINT 로그인 화면 (page 0, 데모 진입 훅) ===== */
+.login-screen {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  background: var(--bg-soft);
+}
+.login-card {
+  width: 100%; max-width: 380px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-panel);
+  padding: 40px 36px 28px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.login-logo { height: 54px; width: auto; object-fit: contain; }
+.login-title {
+  font-size: 26px; font-weight: 700; letter-spacing: 2px;
+  color: var(--sg-red-outer); margin: 18px 0 2px;
+}
+.login-sub { font-size: 12.5px; color: var(--text-sub); margin-bottom: 24px; }
+.login-field {
+  width: 100%; display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px;
+}
+.login-label { font-size: 12px; font-weight: 600; color: var(--text-sub); }
+.login-input {
+  width: 100%; padding: 11px 13px;
+  border: 1px solid var(--line); border-radius: var(--r-inner);
+  font-size: 14px; color: var(--text); font-family: inherit;
+  transition: border-color 0.15s;
+}
+.login-input:focus { outline: none; border-color: var(--sg-red-inner); }
+.login-btn { width: 100%; margin-top: 8px; min-height: 48px; }
+.login-btn-spinner {
+  width: 18px; height: 18px;
+  border: 2.5px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: saint-spin 0.7s linear infinite;
+}
+.login-foot {
+  font-size: 11px; color: var(--text-mute);
+  margin-top: 18px; text-align: center;
+}
+
 /* ===== 인쇄 / PDF export (window.print) ===== */
 @media print {
   html, body { background: #fff; }
