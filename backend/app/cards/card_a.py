@@ -93,7 +93,9 @@ def build(
     content = content_based.score(taken_rows, pool, overviews)
     if content:
         signals_by_label["콘텐츠 유사도"] = content
-    collab = collaborative.score(taken, pool_ids, alumni)
+    # 유사도는 현행 교과과정 과목만 센다 — 폐지 과목이 분모만 키워 옛 졸업생의
+    # 표를 깎는다 (collaborative 참조)
+    collab = collaborative.score(taken, pool_ids, alumni, course_queries.all_course_ids(con))
     if collab:
         signals_by_label["코호트 선호도"] = collab
     pool_attrs = {cid: attrs[cid] for cid in pool_ids if cid in attrs}

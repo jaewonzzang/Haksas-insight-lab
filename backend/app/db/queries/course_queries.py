@@ -28,6 +28,11 @@ def list_by_ids(
     ).fetchall()
 
 
+def all_course_ids(con: sqlite3.Connection) -> set[str]:
+    """현행 교과과정(courses 테이블)의 전체 course_id."""
+    return {r["course_id"] for r in con.execute("SELECT course_id FROM courses")}
+
+
 def offered_in_semester(con: sqlite3.Connection, semester: int) -> set[str]:
     """해당 학기(1|2)에 개설 이력이 있고 아직 살아있는 course_id 집합.
 
