@@ -20,6 +20,7 @@ DB_PATH: Path = PROCESSED_DIR / "s_compass_courses.db"
 # 졸업생 데이터 공급자 선택 — 실데이터 수령 후 "real" 로 전환 (스펙 §5)
 ALUMNI_SOURCE: str = "mock"          # "mock" | "real"
 ALUMNI_MOCK_PATH: Path = MOCK_DIR / "alumni.json"
+ALUMNI_REAL_PATH: Path = PROCESSED_DIR / "alumni.json"  # build_alumni_from_enrollment 산출물
 
 # LLM 공급자 키 (.env 에서 로드, git 제외). 미설정 시 빈 문자열.
 ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
