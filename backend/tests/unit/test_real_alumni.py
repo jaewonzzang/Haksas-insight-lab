@@ -50,6 +50,34 @@ def test_build_career_is_always_none():
     assert all(r.career is None for r in build(_ROWS))
 
 
+def test_build_marks_history_complete():
+    """이력 완결 = 정규학기 7개+ 등록 & 마지막 등록이 데이터 창 끝이 아님 (A17).
+
+    창의 끝은 입력에서 관측한다 — 아래에선 (2026, 1).
+    """
+    def rows(sid, spans):
+        return [(y, t, f"C{i:03}", sid, "화학과", ("화학", None, None))
+                for i, (y, t) in enumerate(spans)]
+
+    eight = [(y, t) for y in (2020, 2021, 2022, 2023) for t in ("1학기", "2학기")]
+    recs = {
+        r.alumni_id: r
+        for r in build([
+            *rows("20학번-1", eight),          # 8학기, 2023 끝 → 완결
+            *rows("22학번-2", eight[:6]),      # 6학기 → 미달
+            *rows("23학번-3", [*eight, (2026, "1학기")]),  # 9학기지만 현재 등록 중
+        ])
+    }
+    assert recs["20학번-1"].history_complete is True
+    assert recs["22학번-2"].history_complete is False
+    assert recs["23학번-3"].history_complete is False
+
+
+def test_build_seasonal_only_is_not_complete():
+    """계절학기만 있으면 정규학기 0 → 완결 아님."""
+    assert build(_ROWS)[1].history_complete is False
+
+
 def test_real_source_loads_and_filters(tmp_path):
     p = tmp_path / "alumni.json"
     p.write_text(

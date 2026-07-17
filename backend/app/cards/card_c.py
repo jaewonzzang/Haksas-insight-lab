@@ -31,7 +31,13 @@ def _label(group: PathwayGroup) -> str:
 def build(student: StudentInput, alumni: list[AlumniRecord]) -> CardC:
     # 양쪽 다 정규화 — 수강내역은 "X전공", courses.db 는 "X학과" 표기 (dept_normalizer)
     depts = {canonical(student.department), *candidate_departments(student.department)}
-    cohort = [r for r in alumni if canonical(r.department) in depts]
+    # 재학생(history_complete=False)은 제외 — 다전공 선택 전이라 "단일전공 유지"로
+    # 잡혀 분포를 깎는다 (실측: 경제학과 21% → 43%). None(mock)은 통과. A17.
+    cohort = [
+        r
+        for r in alumni
+        if canonical(r.department) in depts and r.history_complete is not False
+    ]
     if cohort:
         cohort_label_prefix = student.department
     else:

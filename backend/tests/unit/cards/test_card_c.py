@@ -66,6 +66,29 @@ def test_empty_alumni():
     assert card.entries == []
 
 
+def test_enrolled_students_excluded_from_pathway_distribution():
+    """재학생은 다전공 선택 전이라 "단일전공 유지"로 잡혀 분포를 깎는다 (A17).
+
+    실측: 경제학과 다전공률 21%(재학생 포함) → 43%(이력 완결자만).
+    """
+    student = StudentInput(student_id="S4", department="화학과")
+    grad = _alum("g1", "화학과", ["경영학"])
+    grad.history_complete = True
+    enrolled = _alum("e1", "화학과", [])  # 1학년 — 아직 다전공 전
+    enrolled.history_complete = False
+    card = card_c.build(student, [grad, enrolled])
+    assert card.cohort_label == "화학과 · 졸업생 1명"
+    assert card.entries[0].label == "경영학 (다전공)"
+
+
+def test_unknown_completion_passes_filter():
+    """mock 은 history_complete 가 없다(None) — 데모가 깨지면 안 된다."""
+    student = StudentInput(student_id="S5", department="화학과")
+    rec = _alum("m1", "화학과", [])
+    assert rec.history_complete is None
+    assert card_c.build(student, [rec]).cohort_label == "화학과 · 졸업생 1명"
+
+
 def test_cohort_matches_across_department_spelling():
     """수강내역 "X전공" 졸업생이 "X학과" 학생 코호트에 들어와야 한다 (2026-07-17).
 

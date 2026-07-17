@@ -35,3 +35,7 @@ class AlumniRecord(BaseModel):
     majors: list[Major] = []
     enrollment: list[Enrollment] = []
     career: Career | None = None
+    # 이수 이력이 데이터 창 안에서 끝났는가(= 졸업 추정). 재학 중이면 False.
+    # 다전공 선택 전인 재학생이 섞이면 카드 C 경로 분포가 왜곡된다 (A17).
+    # None = 미상(mock) → 필터 통과. 판정은 어댑터/빌드 스크립트 책임.
+    history_complete: bool | None = None

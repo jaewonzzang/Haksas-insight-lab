@@ -32,6 +32,9 @@ from app.adapters.alumni_types import AlumniRecord, Enrollment, Major
 
 _TERM = {"1학기": 1, "2학기": 2}  # 계절학기(하계/동계) → None
 _ROLES = ("primary", "double", "triple")
+# 이력 완결(졸업 추정) 판정: 정규학기 N개 이상 등록 + 마지막 등록이 데이터 창 끝이 아님.
+# 조기졸업 7학기를 포함하려고 7. 실측(2026-07-17): 14,942명 중 1,919명(12.8%).
+_COMPLETE_MIN_SEMESTERS = 7
 
 
 def _decrypt(path: Path, password: str) -> io.BytesIO:
@@ -55,6 +58,11 @@ def read_rows(xlsx: io.BytesIO):
         yield year, str(term), str(code).split("-")[0], str(student), dept, (m1, m2, m3)
 
 
+def _regular_semesters(items: list[Enrollment]) -> list[tuple[int, int]]:
+    """등록한 정규학기 (계절학기 제외), 시간순."""
+    return sorted({(e.year_taken, e.term_taken) for e in items if e.term_taken})
+
+
 def build(rows) -> list[AlumniRecord]:
     # 학생별로 (학년도, 학기순번) 최신 행의 소속/전공을 채택 → A15 잠정 결정
     latest: dict[str, tuple[tuple[int, int], str, tuple]] = {}
@@ -69,9 +77,16 @@ def build(rows) -> list[AlumniRecord]:
         if student not in latest or rank > latest[student][0]:
             latest[student] = (rank, dept, majors)
 
+    # 데이터 창의 마지막 정규학기 = "현재". 여기 등록 중이면 재학생.
+    now = max(
+        (s for items in enrollments.values() for s in _regular_semesters(items)),
+        default=None,
+    )
+
     records = []
     for student, items in enrollments.items():
         _, dept, majors = latest[student]
+        sems = _regular_semesters(items)
         records.append(
             AlumniRecord(
                 alumni_id=student,
@@ -83,6 +98,9 @@ def build(rows) -> list[AlumniRecord]:
                 ],
                 enrollment=items,
                 career=None,  # 원본에 진로 컬럼 없음 (A14)
+                history_complete=bool(sems)
+                and len(sems) >= _COMPLETE_MIN_SEMESTERS
+                and sems[-1] != now,
             )
         )
     records.sort(key=lambda r: r.alumni_id)
