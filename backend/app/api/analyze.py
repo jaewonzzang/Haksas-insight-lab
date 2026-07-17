@@ -9,7 +9,7 @@ import sqlite3
 from fastapi import APIRouter, Depends
 
 from app.adapters.alumni_source import AlumniSource
-from app.api.deps import get_alumni_source, get_db
+from app.api.deps import get_alumni_source, get_career_alumni_source, get_db
 from app.cards import dashboard
 from app.schemas.cards import DashboardResponse
 from app.schemas.input import StudentInput
@@ -22,5 +22,6 @@ def analyze(
     student: StudentInput,
     con: sqlite3.Connection = Depends(get_db),
     source: AlumniSource = Depends(get_alumni_source),
+    career_source: AlumniSource = Depends(get_career_alumni_source),
 ) -> DashboardResponse:
-    return dashboard.build(student, con, source.all())
+    return dashboard.build(student, con, source.all(), career_source.all())

@@ -45,7 +45,10 @@ DEPT_ALIASES: dict[str, str] = {
     "영문학부": "영미어문전공",
     "영문학부(영미어문전공,": "영미어문전공",  # 원본 잘림
     "영미문화계": "영미어문전공",
-    "글로벌한국학전공": "글로벌한국학부",  # 조직도상 로욜라국제대학 = 글로벌한국학부
+    # 글로벌한국학과/학부 = 개명 이력, 같은 소속으로 본다 (2026-07-17 사용자 확정).
+    # 둘 다 DB에 과목을 개설 중이라 추천 풀은 DEPT_POOLS 로 합쳐 준다.
+    "글로벌한국학과": "글로벌한국학부",
+    "글로벌한국학전공": "글로벌한국학부",
     "경영학전공": "경영학부(경영학전공)",
     "경제학전공": "경제학과",
     "국어국문학전공": "국어국문학과",
@@ -71,6 +74,13 @@ DEPT_ALIASES: dict[str, str] = {
 }
 
 
+# 정규형 → 과목을 개설하는 DB 학과 전체. 한 소속이 DB에 두 이름으로 과목을
+# 올려둔 경우만 넣는다 (합치기만 하면 한쪽 과목이 추천 풀에서 통째로 빠진다).
+DEPT_POOLS: dict[str, list[str]] = {
+    "글로벌한국학부": ["글로벌한국학부", "글로벌한국학과"],
+}
+
+
 def canonical(dept: str) -> str:
     """표기를 courses.department 원문으로. 계열/학부 입학 표기는 대학으로.
 
@@ -86,4 +96,4 @@ def candidate_departments(student_dept: str) -> list[str]:
     c = canonical(student_dept)
     if c in DEPT_COLLEGES:
         return [c, *DEPT_COLLEGES[c]]
-    return [c]
+    return list(DEPT_POOLS.get(c, [c]))

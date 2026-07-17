@@ -25,10 +25,15 @@ def build(
     student: StudentInput,
     con: sqlite3.Connection,
     alumni: list[AlumniRecord],
+    career_alumni: list[AlumniRecord],
 ) -> DashboardResponse:
+    """alumni = 이수 이력(카드 A/C), career_alumni = 진로(카드 D).
+
+    실데이터에 진로 컬럼이 없어 두 공급자를 나눠 받는다 (OPEN_QUESTIONS A14).
+    """
     a = card_a.build(student, con, alumni)
     c = card_c.build(student, alumni)
-    d, evidence = card_d.build(student, con, alumni)
+    d, evidence = card_d.build(student, con, career_alumni)
 
     provider = get_provider()
     a = translator.translate_card_a(a, provider)

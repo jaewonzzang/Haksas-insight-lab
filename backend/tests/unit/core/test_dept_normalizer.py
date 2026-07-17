@@ -79,6 +79,13 @@ def test_candidate_departments_normalizes_spelling():
     assert candidate_departments("컴퓨터공학전공") == ["컴퓨터공학과"]
 
 
+def test_renamed_department_merges_but_keeps_both_course_pools():
+    """글로벌한국학과/학부 = 같은 소속. 코호트는 합치되 과목 풀은 둘 다 봐야 한다."""
+    assert canonical("글로벌한국학과") == "글로벌한국학부"
+    assert canonical("글로벌한국학전공") == "글로벌한국학부"
+    assert candidate_departments("글로벌한국학과") == ["글로벌한국학부", "글로벌한국학과"]
+
+
 def test_college_members_are_not_themselves_colleges():
     """학과가 대학 이름과 겹치면 candidate_departments 가 무한 확장된다."""
     members = {m for ms in DEPT_COLLEGES.values() for m in ms}
