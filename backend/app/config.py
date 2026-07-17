@@ -17,10 +17,9 @@ PROCESSED_DIR: Path = DATA_DIR / "processed"
 EXTERNAL_DIR: Path = DATA_DIR / "external"
 MOCK_DIR: Path = DATA_DIR / "mock"
 DB_PATH: Path = PROCESSED_DIR / "s_compass_courses.db"
-# 졸업생 데이터 공급자 선택. 카드 A/C(이수 이력)와 카드 D(진로)를 나눠 둔다 —
-# 2차 수령 실데이터에 진로 컬럼이 없어 카드 D만 mock 유지 (OPEN_QUESTIONS A14).
-ALUMNI_SOURCE: str = "real"          # 카드 A/C — "mock" | "real"
-CAREER_ALUMNI_SOURCE: str = "mock"   # 카드 D — 실데이터에 진로 없음
+# 졸업생 데이터 공급자 선택 (교체점). 카드 A/C/D 공통 — 카드 D 는 진로 컬럼 대신
+# 대학원 연계 과목 이수를 관측하므로 실데이터로 돈다 (OPEN_QUESTIONS A14).
+ALUMNI_SOURCE: str = "real"          # "mock" | "real"
 ALUMNI_MOCK_PATH: Path = MOCK_DIR / "alumni.json"
 ALUMNI_REAL_PATH: Path = PROCESSED_DIR / "alumni.json"  # build_alumni_from_enrollment 산출물
 

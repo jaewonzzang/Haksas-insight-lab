@@ -1,5 +1,7 @@
-"""카드 D 오케스트레이터: 임베딩 → 유사도 top-N → 클러스터 → CardD + ClusterEvidence.
+"""카드 D 오케스트레이터: 임베딩 → 유사도 top-N → 이수 트랙 → CardD + ClusterEvidence.
 
+진로 데이터가 없어 진로를 추론하지 않고 대학원 연계 과목 이수를 관측한다
+(engines/career/track, OPEN_QUESTIONS A14).
 pattern_summary/summary/text 는 W5(llm/translator) 도입 전까지 결정론 폴백.
 """
 
@@ -9,8 +11,7 @@ from collections import Counter
 from app.adapters.alumni_types import AlumniRecord
 from app.core.dept_normalizer import canonical, candidate_departments
 from app.db.queries import course_queries
-from app.engines.career import cluster as career_cluster
-from app.engines.career import embedding, similarity
+from app.engines.career import embedding, similarity, track
 from app.schemas.cards import (
     CardD,
     CareerEntry,
@@ -23,8 +24,6 @@ from app.schemas.cards import (
 from app.schemas.input import StudentInput
 
 TOP_N = 30
-K_CLUSTERS = 3
-TYPE_NAMES = {"job": "취업", "grad": "대학원 진학", "other": "기타 진로"}
 
 
 def _empty() -> tuple[CardD, ClusterEvidence]:
@@ -43,7 +42,8 @@ def build(
     alumni: list[AlumniRecord],
     top_n: int = TOP_N,
 ) -> tuple[CardD, ClusterEvidence]:
-    with_courses = [r for r in alumni if r.enrollment]
+    # 재학생 제외 — "어디로 갔나"는 이력이 끝난 사람 기준이어야 의미가 있다 (A17).
+    with_courses = [r for r in alumni if r.enrollment and r.history_complete is not False]
     sets = [{e.course_id for e in r.enrollment} for r in with_courses]
     taken = set(student.taken_course_ids)
 
@@ -60,9 +60,7 @@ def build(
     if n == 0:
         return _empty()
 
-    groups = career_cluster.cluster(
-        subset, matrix[[i for i, _ in ranked]], k=K_CLUSTERS
-    )
+    groups = track.split(subset)
     entries = [
         CareerEntry(
             cluster_label=g.label,
@@ -73,32 +71,28 @@ def build(
         for g in groups
     ]
 
-    # sub_chips — grad 우선, 없으면 최다 유형 세부
-    by_type = Counter(
-        (r.career.type if r.career and r.career.type else "other") for r in subset
-    )
-    focus = "grad" if by_type.get("grad") else by_type.most_common(1)[0][0]
-    focus_labels = Counter(
-        (r.career.label if r.career and r.career.label else "미분류")
-        for r in subset
-        if (r.career.type if r.career and r.career.type else "other") == focus
-    )
+    # sub_chips — 코호트가 실제로 이수한 대학원 연계 과목
+    top_grad = track.top_grad_courses(subset)
+    grad_names = {
+        r["course_id"]: r["course_name"]
+        for r in course_queries.list_by_ids(con, [cid for cid, _ in top_grad])
+    }
     sub_chips = [
-        CareerSubChip(label=label, n=cnt)
-        for label, cnt in sorted(focus_labels.items(), key=lambda x: (-x[1], x[0]))[:5]
+        CareerSubChip(label=grad_names.get(cid, cid), n=cnt) for cid, cnt in top_grad
     ]
-    sub_title = f"{TYPE_NAMES[focus]} 세부 분포"
 
-    top_entry = entries[0]
+    grad_group = next((g for g in groups if g.label == track.TAKEN_LABEL), None)
     card = CardD(
-        similar_label=f"유사 경로 {n}명",
+        similar_label=f"유사 이수 경로 {n}명",
+        sub_title="이수한 대학원 연계 과목",
         sample_size=n,
         entries=entries,
-        sub_title=sub_title,
         sub_chips=sub_chips,
         pattern_summary=(
-            f"유사 경로 {n}명 중 {top_entry.cluster_label} 계열이 "
-            f"{top_entry.share_percent}%로 가장 많습니다."
+            f"유사 이수 경로 {n}명 중 {grad_group.count}명"
+            f"({round(grad_group.count / n * 100)}%)이 대학원 연계 과목을 이수했습니다."
+            if grad_group
+            else f"유사 이수 경로 {n}명 중 대학원 연계 과목 이수자는 없습니다."
         ),
     )
 
@@ -134,14 +128,17 @@ def build(
         CareerPattern(
             label=g.label,
             type=g.career_type,
-            text=f"유사 졸업생 {g.count}명이 이 경로를 선택",
+            text=f"유사 졸업생 {g.count}명",
         )
-        for g in groups[:3]
+        for g in groups
     ]
     evidence = ClusterEvidence(
         factors=factors,
         common_courses=common_courses,
         career_patterns=career_patterns,
-        summary=f"이수 패턴이 유사한 졸업생 {n}명의 진로 분포 기반",
+        summary=(
+            f"이수 패턴이 유사한 졸업생 {n}명의 대학원 연계 과목 이수 여부 기반 "
+            "(진학 결과가 아니라 재학 중 선택을 관측한 값)"
+        ),
     )
     return card, evidence

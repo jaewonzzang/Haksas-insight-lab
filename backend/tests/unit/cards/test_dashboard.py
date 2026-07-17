@@ -46,7 +46,7 @@ def _stub_cards(monkeypatch):
 def test_assembles_profile_kpi_with_fallback(monkeypatch):
     _stub_cards(monkeypatch)
     monkeypatch.setattr(dashboard, "get_provider", lambda: None)  # 키 없음 = 폴백
-    resp = dashboard.build(_student(), con=None, alumni=[], career_alumni=[])
+    resp = dashboard.build(_student(), con=None, alumni=[])
     assert resp.profile.name == "학생 A"
     assert resp.profile.department == "지식융합미디어학부"
     assert resp.profile.report_semester == "2026-1학기"
@@ -67,5 +67,5 @@ def test_injects_translator_when_provider_available(monkeypatch):
     # FakeProvider는 스키마 인자를 무시하고 CardATranslation을 카드 D에도 반환하므로
     # pattern_texts 접근에서 AttributeError — 카드 D 통역은 우회 (test_translator에서 검증 완료).
     monkeypatch.setattr(dashboard.translator, "translate_card_d", lambda c, e, p: (c, e))
-    resp = dashboard.build(_student(), con=None, alumni=[], career_alumni=[])
+    resp = dashboard.build(_student(), con=None, alumni=[])
     assert resp.card_a.major[0].reason_short == "AIE1001 통역"
