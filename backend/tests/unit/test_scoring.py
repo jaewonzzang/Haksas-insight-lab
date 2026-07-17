@@ -2,34 +2,33 @@
 
 from app.engines.recommender.scoring import score_candidate
 
-ALL_SIX = ["코호트 선호도", "콘텐츠 유사도", "시간 가중 평점",
-           "사용자 선호 매칭", "트랙 충족도", "학년 적합도"]
+ALL_FACTORS = ["코호트 선호도", "콘텐츠 유사도", "사용자 선호 매칭", "학년 적합도"]
 
 
 def test_all_present_full_signal_no_prereq():
-    s = {label: 100 for label in ALL_SIX}
+    s = {label: 100 for label in ALL_FACTORS}
     r = score_candidate(s, None)
     assert r.score_percent == 100
     assert r.grade == "강추"
-    assert len(r.factors) == 6  # 선이수 factor 없음
+    assert len(r.factors) == 4  # 선이수 factor 없음
     assert all(f.kind == "pos" for f in r.factors)
-    assert sum(int(f.contribution) for f in r.factors) == 100
+    # 기여도는 개별 반올림 → 합이 점수와 최대 1 어긋남 (36+31+21+11=99 vs 100)
+    assert abs(sum(int(f.contribution) for f in r.factors) - r.score_percent) <= 1
 
 
 def test_na_factors_do_not_deflate_score():
-    # 코호트·콘텐츠만 만점, 나머지 4개 N/A → 정규화로 100 유지
+    # 코호트·콘텐츠만 만점, 나머지 2개 N/A → 정규화로 100 유지
     s = {"코호트 선호도": 100, "콘텐츠 유사도": 100,
-         "시간 가중 평점": None, "사용자 선호 매칭": None,
-         "트랙 충족도": None, "학년 적합도": None}
+         "사용자 선호 매칭": None, "학년 적합도": None}
     r = score_candidate(s, None)
     assert r.score_percent == 100
     na = [f for f in r.factors if f.kind == "na"]
-    assert len(na) == 4
+    assert len(na) == 2
     assert all(f.contribution == "N/A" and f.weight_percent == 0 for f in na)
 
 
 def test_prereq_penalty_subtracts_after_hybrid():
-    s = {label: 80 for label in ALL_SIX}
+    s = {label: 80 for label in ALL_FACTORS}
     r = score_candidate(s, 50)  # penalty = round(40 * (1 - 0.5)) = 20
     assert r.score_percent == 60  # 80 - 20
     assert r.grade == "고려"
@@ -48,7 +47,7 @@ def test_prereq_fully_met_no_penalty():
 
 def test_prereq_zero_yields_max_penalty():
     # 스펙 §6: prereq_fulfillment=0 → 감산 = PREREQ_PENALTY_MAX(40)
-    s = {label: 80 for label in ALL_SIX}
+    s = {label: 80 for label in ALL_FACTORS}
     r = score_candidate(s, 0)  # penalty = round(40 * (1 - 0)) = 40
     assert r.score_percent == 40  # 80 - 40
     assert r.grade == "유보"
@@ -59,7 +58,7 @@ def test_prereq_zero_yields_max_penalty():
 
 
 def test_all_none_yields_zero_yubo():
-    s = {label: None for label in ALL_SIX}
+    s = {label: None for label in ALL_FACTORS}
     r = score_candidate(s, None)
     assert r.score_percent == 0
     assert r.grade == "유보"
