@@ -7,7 +7,7 @@ import sqlite3
 from collections import Counter
 
 from app.adapters.alumni_types import AlumniRecord
-from app.core.dept_normalizer import candidate_departments
+from app.core.dept_normalizer import canonical, candidate_departments
 from app.db.queries import course_queries
 from app.engines.career import cluster as career_cluster
 from app.engines.career import embedding, similarity
@@ -106,7 +106,7 @@ def build(
     def _jaccard(a: set[str], b: set[str]) -> float:
         return len(a & b) / len(a | b) if (a | b) else 0.0
 
-    depts = {student.department, *candidate_departments(student.department)}
+    depts = {canonical(student.department), *candidate_departments(student.department)}
     factors = [
         SimilarityFactor(
             label="이수과목 중복도",
@@ -118,7 +118,7 @@ def build(
         ),
         SimilarityFactor(
             label="학과 코호트 일치",
-            percent=round(sum(1 for r in subset if r.department in depts) / n * 100),
+            percent=round(sum(1 for r in subset if canonical(r.department) in depts) / n * 100),
         ),
     ]
     course_freq = Counter(cid for s in subset_sets for cid in s)

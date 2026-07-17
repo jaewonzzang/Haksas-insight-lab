@@ -4,7 +4,7 @@
 """
 
 from app.adapters.alumni_types import AlumniRecord
-from app.core.dept_normalizer import candidate_departments
+from app.core.dept_normalizer import canonical, candidate_departments
 from app.engines.pathway.distribution import PathwayGroup, aggregate
 from app.schemas.cards import CardC, PathwayCredits, PathwayEntry
 from app.schemas.input import StudentInput
@@ -29,8 +29,9 @@ def _label(group: PathwayGroup) -> str:
 
 
 def build(student: StudentInput, alumni: list[AlumniRecord]) -> CardC:
-    depts = {student.department, *candidate_departments(student.department)}
-    cohort = [r for r in alumni if r.department in depts]
+    # 양쪽 다 정규화 — 수강내역은 "X전공", courses.db 는 "X학과" 표기 (dept_normalizer)
+    depts = {canonical(student.department), *candidate_departments(student.department)}
+    cohort = [r for r in alumni if canonical(r.department) in depts]
     if cohort:
         cohort_label_prefix = student.department
     else:

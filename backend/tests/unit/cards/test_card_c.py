@@ -64,3 +64,19 @@ def test_other_bucket_dim():
 def test_empty_alumni():
     card = card_c.build(STUDENT, [])
     assert card.entries == []
+
+
+def test_cohort_matches_across_department_spelling():
+    """수강내역 "X전공" 졸업생이 "X학과" 학생 코호트에 들어와야 한다 (2026-07-17).
+
+    실데이터는 소속을 아트&테크놀로지전공/학과 두 표기로 적어 완전일치로는
+    코호트가 쪼개졌다 (14,942명 중 5,036명 미매칭).
+    """
+    student = StudentInput(student_id="S3", department="아트&테크놀로지학과")
+    alumni = [
+        _alum("a1", "아트&테크놀로지학과", []),
+        _alum("a2", "아트&테크놀로지전공", []),  # 같은 학과, 다른 표기
+        _alum("x1", "화학과", []),  # 다른 학과 — 섞이면 안 됨
+    ]
+    card = card_c.build(student, alumni)
+    assert card.cohort_label == "아트&테크놀로지학과 · 졸업생 2명"
