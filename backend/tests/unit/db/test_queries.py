@@ -94,6 +94,36 @@ def test_offered_in_semester(con):
     assert course_queries.offered_in_semester(con, 1) == {"CSE1010", "CSE2020"}
 
 
+def test_offered_in_semester_excludes_dead_courses(con):
+    """최근 두 학기에 흔적이 없으면 폐강 — 2학기 이력이 있어도 제외.
+
+    2026-07-12 확인: 2024-2 에만 개설된 216과목이 2026-2 풀에 오염됐었다.
+    """
+    con.execute("INSERT INTO courses (course_id, course_name, department, credit, year, semester) "
+                "VALUES ('OLD1001', '폐강과목', '컴퓨터공학과', 3.0, 2024, 2)")
+    con.execute("INSERT INTO course_offerings (course_id, year, semester) VALUES ('OLD1001', 2024, 2)")
+    assert "OLD1001" not in course_queries.offered_in_semester(con, 2)
+
+
+def test_offered_in_semester_keeps_alternating_courses(con):
+    """격년/간헐 개설: 2학기 이력이 오래됐어도 최근 학기에 살아있으면 포함.
+
+    2026-07-17 확인: 화공유체역학 등 42종이 "최신 연도의 해당 학기" 규칙에서 빠졌다.
+    """
+    con.execute("INSERT INTO courses (course_id, course_name, department, credit, year, semester) "
+                "VALUES ('ALT1001', '격년과목', '컴퓨터공학과', 3.0, 2026, 1)")
+    con.executemany(
+        "INSERT INTO course_offerings (course_id, year, semester) VALUES (?, ?, ?)",
+        [("ALT1001", 2024, 2), ("ALT1001", 2026, 1)],  # 2025-2 결번, 2026-1 생존
+    )
+    assert "ALT1001" in course_queries.offered_in_semester(con, 2)
+
+
+def test_offered_in_semester_excludes_other_semester_only(con):
+    """1학기에만 여는 과목은 2학기 풀에 들어오면 안 된다 (실측: 1학기만 717과목)."""
+    assert "CSE2020" not in course_queries.offered_in_semester(con, 2)  # 2026-1 만 개설
+
+
 def test_get_prereq_tree(con):
     tree = prereq_queries.get_prereq_tree(con, "CSE2020")
     assert tree == {"type": "course", "code": "CSE1010"}

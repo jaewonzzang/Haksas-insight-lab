@@ -29,15 +29,31 @@ def list_by_ids(
 
 
 def offered_in_semester(con: sqlite3.Connection, semester: int) -> set[str]:
-    """가장 최근 연도의 해당 학기(1|2)에 개설된 course_id 집합.
+    """해당 학기(1|2)에 개설 이력이 있고 아직 살아있는 course_id 집합.
 
-    연도 무관 이력을 쓰면 폐강 과목이 섞인다(2026-07-12 확인: 2024-2에만
-    개설된 216과목이 2026-2 추천 풀에 오염) — 최신 연도 학기로 한정.
+    개설 학기는 과목마다 다르다 (실측 2026-07-17: 1학기만 717 · 2학기만 709 ·
+    둘 다 381) → 대상 학기에 안 여는 과목을 추천하면 안 된다.
+
+    "살아있음" = 최근 두 학기에 개설. 이 조건이 없으면 폐강 과목이 섞인다
+    (2026-07-12 확인: 2024-2에만 개설된 216과목이 2026-2 풀에 오염).
+    반대로 "최신 연도의 해당 학기"로만 좁히면 격년 개설 과목이 빠진다
+    (2026-07-17 확인: 화공유체역학 등 42종 — 2024-2 개설 + 2026-1 생존).
     """
     rows = con.execute(
-        "SELECT DISTINCT course_id FROM course_offerings WHERE semester = ? "
-        "AND year = (SELECT MAX(year) FROM course_offerings WHERE semester = ?)",
-        (semester, semester),
+        """
+        WITH recent AS (
+            SELECT DISTINCT year, semester FROM course_offerings
+            ORDER BY year DESC, semester DESC LIMIT 2
+        )
+        SELECT DISTINCT o.course_id
+        FROM course_offerings o
+        WHERE o.semester = ?
+          AND o.course_id IN (
+              SELECT c.course_id FROM course_offerings c
+              JOIN recent r ON c.year = r.year AND c.semester = r.semester
+          )
+        """,
+        (semester,),
     ).fetchall()
     return {r["course_id"] for r in rows}
 
