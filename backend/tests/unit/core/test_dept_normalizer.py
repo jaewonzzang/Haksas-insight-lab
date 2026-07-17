@@ -47,14 +47,20 @@ def test_canonical_is_idempotent():
 
 
 def test_faculty_spelling_resolves_to_college_not_a_department():
-    """계열/학부 입학 표기는 특정 학과로 내리면 안 된다 — 대학까지만.
+    """계열 입학 표기는 특정 학과로 내리면 안 된다 — 대학까지만.
 
-    실측: 이 표기로 기록된 1,185명 전원이 1~2학년(학과 선택 전).
+    실측: 이 표기로 기록된 861명 전원이 1~2학년(학과 선택 전).
     어간 규칙으로 밀면 "사회과학부"가 "사회학과"에 잘못 합쳐진다.
     """
     assert canonical("사회과학부") == "사회과학대학"
     assert canonical("인문학부") == "인문대학"
     assert canonical("지식융합미디어학부") == "지식융합미디어대학"
+
+
+def test_english_faculty_variants_collapse_to_one_department():
+    """조직도 "영문학부" = DB "영미어문전공". 학부·전공·구 계열 표기가 다 같은 곳."""
+    for variant in ("영문학부", "영문학부(영미어문전공,", "영미문화계", "영미어문전공"):
+        assert canonical(variant) == "영미어문전공"
 
 
 def test_undeclared_students_stay_out_of_department_cohorts():
