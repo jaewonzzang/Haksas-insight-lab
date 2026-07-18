@@ -5,6 +5,7 @@ reason_short/why_summary 는 W5(llm/translator) 도입 전까지 결정론 폴�
 
 import re
 import sqlite3
+from typing import NamedTuple
 
 from app.adapters.alumni_types import AlumniRecord
 from app.core import year_rules
@@ -56,16 +57,28 @@ def _major_departments(student: StudentInput) -> list[str]:
     return out
 
 
-def build(
+class Collected(NamedTuple):
+    """가중치와 무관한 수집 결과 — rank 가 가중 결합. 평가 스크립트 재사용점 (A5)."""
+
+    major_pool: list[sqlite3.Row]
+    general_pool: list[sqlite3.Row]
+    signals_by_label: dict[str, dict[str, float]]
+    fulfill: dict[str, float | None]
+    restrictions: list[sqlite3.Row]
+    student_depts: set[str]
+
+
+def collect(
     student: StudentInput,
     con: sqlite3.Connection,
     alumni: list[AlumniRecord],
-) -> CardA:
+    target_semester: int = TARGET_SEMESTER,
+) -> Collected:
     taken = expand_taken(
         set(student.taken_course_ids),
         [tuple(r) for r in course_queries.list_aliases(con)],
     )
-    offered = course_queries.offered_in_semester(con, TARGET_SEMESTER)
+    offered = course_queries.offered_in_semester(con, target_semester)
 
     def _pool(departments: list[str]) -> list[sqlite3.Row]:
         return [
@@ -82,58 +95,75 @@ def build(
     general_pool = _pool([GENERAL_DEPT])
     pool = major_pool + general_pool
     pool_ids = [r["course_id"] for r in pool]
-    if not pool_ids:
-        return CardA(major=[], general=[], candidates=[])
+    student_depts = {student.department, *student.extra_majors, *_major_departments(student)}
 
     signals_by_label: dict[str, dict[str, float]] = {}
-    taken_rows = course_queries.list_by_ids(con, sorted(taken))
-    # 강의계획서 속성 (부분 커버리지) — 개요는 콘텐츠 신호에, 팀플·출석은 선호 매칭에
-    attrs = course_queries.syllabus_attrs(con, [*pool_ids, *sorted(taken)])
-    overviews = {cid: a["overview_text"] for cid, a in attrs.items() if a["overview_text"]}
-    content = content_based.score(taken_rows, pool, overviews)
-    if content:
-        signals_by_label["콘텐츠 유사도"] = content
-    # 유사도는 현행 교과과정 과목만 센다 — 폐지 과목이 분모만 키워 옛 졸업생의
-    # 표를 깎는다 (collaborative 참조)
-    collab = collaborative.score(taken, pool_ids, alumni, course_queries.all_course_ids(con))
-    if collab:
-        signals_by_label["코호트 선호도"] = collab
-    pool_attrs = {cid: attrs[cid] for cid in pool_ids if cid in attrs}
-    pref = preference.score(
-        student.prefer_team_project,
-        student.prefer_low_attendance,
-        student.prefer_presentation,
-        pool_attrs,
-    )
-    if pref:
-        signals_by_label["사용자 선호 매칭"] = pref
-    if student.year is not None:
-        signals_by_label["학년 적합도"] = {
-            r["course_id"]: year_rules.year_fit_score(
-                student.year, year_rules.parse_recommended_years(r["recommended_year_raw"])
-            )
-            for r in pool
-        }
+    fulfill: dict[str, float | None] = {}
+    restrictions: list[sqlite3.Row] = []
+    if pool_ids:
+        taken_rows = course_queries.list_by_ids(con, sorted(taken))
+        # 강의계획서 속성 (부분 커버리지) — 개요는 콘텐츠 신호에, 팀플·출석은 선호 매칭에
+        attrs = course_queries.syllabus_attrs(con, [*pool_ids, *sorted(taken)])
+        overviews = {cid: a["overview_text"] for cid, a in attrs.items() if a["overview_text"]}
+        content = content_based.score(taken_rows, pool, overviews)
+        if content:
+            signals_by_label["콘텐츠 유사도"] = content
+        # 유사도는 현행 교과과정 과목만 센다 — 폐지 과목이 분모만 키워 옛 졸업생의
+        # 표를 깎는다 (collaborative 참조)
+        collab = collaborative.score(taken, pool_ids, alumni, course_queries.all_course_ids(con))
+        if collab:
+            signals_by_label["코호트 선호도"] = collab
+        pool_attrs = {cid: attrs[cid] for cid in pool_ids if cid in attrs}
+        pref = preference.score(
+            student.prefer_team_project,
+            student.prefer_low_attendance,
+            student.prefer_presentation,
+            pool_attrs,
+        )
+        if pref:
+            signals_by_label["사용자 선호 매칭"] = pref
+        if student.year is not None:
+            signals_by_label["학년 적합도"] = {
+                r["course_id"]: year_rules.year_fit_score(
+                    student.year, year_rules.parse_recommended_years(r["recommended_year_raw"])
+                )
+                for r in pool
+            }
 
-    trees = {cid: prereq_queries.get_prereq_tree(con, cid) for cid in pool_ids}
-    fulfill = prereq_filter.fulfillments(taken, pool_ids, trees)
+        trees = {cid: prereq_queries.get_prereq_tree(con, cid) for cid in pool_ids}
+        fulfill = prereq_filter.fulfillments(taken, pool_ids, trees)
+        restrictions = course_queries.list_restrictions_for(con, pool_ids)
+
+    return Collected(major_pool, general_pool, signals_by_label, fulfill, restrictions, student_depts)
+
+
+def rank(c: Collected) -> dict[str, ScoredCandidate]:
     # 정규화는 그룹(전공/교양) 내 상대 강도 — combine이 candidate_ids 기준으로 스케일 (2026-07-13)
-    major_pool_ids = [r["course_id"] for r in major_pool]
-    general_pool_ids = [r["course_id"] for r in general_pool]
     scored = {
-        **hybrid.combine(signals_by_label, fulfill, major_pool_ids),
-        **hybrid.combine(signals_by_label, fulfill, general_pool_ids),
+        **hybrid.combine(c.signals_by_label, c.fulfill, [r["course_id"] for r in c.major_pool]),
+        **hybrid.combine(c.signals_by_label, c.fulfill, [r["course_id"] for r in c.general_pool]),
     }
-
-    student_depts = {student.department, *student.extra_majors, *_major_departments(student)}
-    scored = restriction_filter.apply(
+    return restriction_filter.apply(
         scored,
-        student_depts,
+        c.student_depts,
         True,  # StudentInput 에 전공 구분 없음 — 데모 학생은 1전공 관점
-        course_queries.list_restrictions_for(con, pool_ids),
+        c.restrictions,
     )
 
-    major_ids = {r["course_id"] for r in major_pool}
+
+def build(
+    student: StudentInput,
+    con: sqlite3.Connection,
+    alumni: list[AlumniRecord],
+) -> CardA:
+    c = collect(student, con, alumni)
+    pool = c.major_pool + c.general_pool
+    pool_ids = [r["course_id"] for r in pool]
+    if not pool_ids:
+        return CardA(major=[], general=[], candidates=[])
+    scored = rank(c)
+
+    major_ids = {r["course_id"] for r in c.major_pool}
     rows_by_id = {r["course_id"]: r for r in pool}
     ranked = sorted(
         (cid for cid in pool_ids if cid in scored),
