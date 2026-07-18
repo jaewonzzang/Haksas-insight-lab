@@ -1,5 +1,9 @@
 # A5 가중치 홀드아웃 튜닝 + A15 소속 변경 검증 Implementation Plan
 
+> **진행 상태 (2026-07-18)**: Task 1~4 완료 (커밋 5033a65·29009b8·f49fcf2). Task 5(A15)는
+> `ENROLLMENT_XLSX_PASSWORD` 부재로 사용자 입력 대기 — xlsx 복호화 없이는 학기별 소속
+> 시퀀스를 얻을 수 없다 (alumni.json 은 최신 소속만 보존).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 2차 수령분 실이력(14,942명)으로 ① 추천 가중치·컷오프를 홀드아웃 검증으로 재조정(A5 잔여 종결), ② 소속 변경 2,258명을 분류해 "최신 소속" 잠정 결정을 실측 근거로 확정(A15 종결).
