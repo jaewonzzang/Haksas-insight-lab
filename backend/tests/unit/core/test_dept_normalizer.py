@@ -6,6 +6,7 @@ from app.core.dept_normalizer import (
     FACULTY_COLLEGES,
     canonical,
     candidate_departments,
+    major_label_departments,
 )
 
 
@@ -94,3 +95,40 @@ def test_college_members_are_not_themselves_colleges():
 
 def test_faculty_targets_are_known_colleges():
     assert set(FACULTY_COLLEGES.values()) <= set(DEPT_COLLEGES)
+
+
+# --- major_label_departments: 수강내역 1·2·3전공 라벨 → 개설 학과 (추가학점 근사) ---
+
+_DB = {
+    "경영학부(경영학전공)", "컴퓨터공학과", "유럽문화학과", "영미어문전공",
+    "빅데이터사이언스연계전공", "정치학/경제학/철학 연계전공",
+    "글로벌한국학부", "글로벌한국학과",
+}
+
+
+def test_major_label_suffix_restoration():
+    assert major_label_departments("경영학", _DB) == ["경영학부(경영학전공)"]
+    assert major_label_departments("컴퓨터공학", _DB) == ["컴퓨터공학과"]
+    assert major_label_departments("영미어문", _DB) == ["영미어문전공"]
+
+
+def test_major_label_parenthetical_stripped():
+    assert major_label_departments("유럽문화 (프랑스어 심화)", _DB) == ["유럽문화학과"]
+
+
+def test_major_label_linked_major_normalized_match():
+    assert major_label_departments("빅데이터 사이언스(데이터분석)", _DB) == ["빅데이터사이언스연계전공"]
+    assert major_label_departments("정치학.경제학.철학", _DB) == ["정치학/경제학/철학 연계전공"]
+
+
+def test_major_label_pool_merge():
+    assert major_label_departments("글로벌한국학", _DB) == ["글로벌한국학부", "글로벌한국학과"]
+
+
+def test_major_label_unmapped_returns_empty():
+    assert major_label_departments("한국사회문화", _DB) == []
+
+
+def test_major_label_intensive_variant_maps_to_base_dept():
+    """심화전공 표기("컴퓨터공학 심화(단일)")는 기반 학과로 내린다."""
+    assert major_label_departments("컴퓨터공학 심화(단일)", _DB) == ["컴퓨터공학과"]

@@ -97,3 +97,29 @@ def candidate_departments(student_dept: str) -> list[str]:
     if c in DEPT_COLLEGES:
         return [c, *DEPT_COLLEGES[c]]
     return list(DEPT_POOLS.get(c, [c]))
+
+
+def _squash(s: str) -> str:
+    return "".join(ch for ch in s if ch not in " ./·")
+
+
+def major_label_departments(label: str, db_departments: set[str]) -> list[str]:
+    """수강내역 1·2·3전공 라벨 → 과목 개설 학과 목록 (추가학점 근사용).
+
+    전공 컬럼은 "경영학"·"유럽문화 (프랑스어 심화)" 같은 축약형이라 개설 학과명과
+    표기가 다르다. 접미어(전공/과/학과) 복원 → canonical → DB 실재 확인, 실패 시
+    연계전공 정규화 매칭("빅데이터 사이언스(데이터분석)" → "빅데이터사이언스연계전공").
+    못 찾으면 빈 목록(폐지 연계전공·학생설계전공) — 호출부는 학점 미상(None) 처리.
+    """
+    stem = label.split("(")[0].strip()
+    if stem.endswith("심화"):  # 심화전공 표기("컴퓨터공학 심화") → 기반 학과
+        stem = stem[:-2].strip()
+    for cand in (stem, stem + "전공", stem + "과", stem + "학과"):
+        c = canonical(cand)
+        if c in db_departments:
+            return [d for d in candidate_departments(c) if d in db_departments]
+    norm = _squash(stem)
+    for d in sorted(db_departments):
+        if _squash(d) == norm + "연계전공":
+            return [d]
+    return []
