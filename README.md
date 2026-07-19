@@ -56,10 +56,9 @@ npm run dev
 
 ## 필수 읽기 순서 (신규 합류자)
 
-1. [`CLAUDE.md`](./CLAUDE.md) — 모듈 책임 경계 + 작업 규칙
-2. [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — 4계층 + 카드 ↔ 엔진 매핑
-3. [`docs/DATA_SCHEMA.md`](./docs/DATA_SCHEMA.md) — 1단계 산출물 5테이블
-4. [`docs/OPEN_QUESTIONS.md`](./docs/OPEN_QUESTIONS.md) — 미결정 사항 (작업 전 확인)
+1. [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — 4계층 + 카드 ↔ 엔진 매핑
+2. [`docs/DATA_SCHEMA.md`](./docs/DATA_SCHEMA.md) — 1단계 산출물 5테이블
+3. [`docs/OPEN_QUESTIONS.md`](./docs/OPEN_QUESTIONS.md) — 미결정 사항 (작업 전 확인)
 
 ## 컨텍스트
 

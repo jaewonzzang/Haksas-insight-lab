@@ -50,3 +50,7 @@ Thumbs.db
 
 # SDD 진행 원장 (스크래치)
 .superpowers/
+
+# AI 협업 로컬 설정 — 포트폴리오 공개 범위에서 제외 (2026-07-19, 로컬 파일은 유지)
+CLAUDE.md
+.claude/
