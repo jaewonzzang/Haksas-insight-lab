@@ -1,0 +1,16 @@
+# GitHub Linguist 언어 통계 보정
+#
+# 문제: frontend/legacy/mockup.html (129KB, 초기 디자인 프로토타입 단일 파일)이
+# 리포 전체 언어 통계를 지배해 대표 언어가 HTML로 표시됐다. 이 파일은 런타임
+# 코드가 아니라 디자인 참고용 보존 자료다 (CLAUDE.md: "프로토타입은 디자인 토큰만
+# 추출, 원본은 frontend/legacy/ 보존").
+#
+# 처리: legacy 폴더 전체를 linguist-documentation 으로 분류해 통계에서 제외.
+# 이후 대표 언어는 실제 코드 기준 Python(backend) · TypeScript(frontend)로 잡힌다.
+#
+# 참고로 제외하지 않은 것들:
+# - frontend/src/styles/mockup.css — 프로토타입에서 이관했지만 main.tsx 가
+#   임포트하는 실제 런타임 스타일이라 통계에 남기는 게 정직하다.
+# - package-lock.json, docs/ — Linguist 기본 규칙이 이미 generated/documentation
+#   으로 제외한다.
+frontend/legacy/** linguist-documentation
