@@ -34,3 +34,8 @@ services:
         value: https://saintplus-demo-api-k7x2.onrender.com
       - key: VITE_USE_MOCK
         value: "false"
+      # Render 가 buildCommand 이전에 자체 npm install 을 돌린다. vite 8 ↔
+      # @vitejs/plugin-react 4.x peer 선언(≤7) 충돌로 ERESOLVE 가 나므로 완화.
+      # 로컬 npm ci(lockfile 그대로)와 동일한 조합으로 설치된다.
+      - key: NPM_CONFIG_LEGACY_PEER_DEPS
+        value: "true"
