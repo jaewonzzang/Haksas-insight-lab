@@ -26,3 +26,7 @@ ALUMNI_REAL_PATH: Path = PROCESSED_DIR / "alumni.json"  # build_alumni_from_enro
 # LLM 공급자 키 (.env 에서 로드, git 제외). 미설정 시 빈 문자열.
 ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
 OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+
+# 데모 배포용 (render.yaml 에서 주입, 로컬 기본값은 기존 동작 유지)
+CORS_EXTRA_ORIGIN: str = os.getenv("CORS_EXTRA_ORIGIN", "")  # 배포 프론트 도메인
+EXPOSE_DEBUG_ROUTES: bool = os.getenv("EXPOSE_DEBUG_ROUTES", "1") == "1"  # /courses 노출 여부
