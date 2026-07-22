@@ -18,8 +18,10 @@ export default function ProfileScreen({ profiles, onSelect }: Props) {
           <div key={p.id} className="profile-card" onClick={() => onSelect(p)}>
             <div className="profile-card-name">{p.label}</div>
             <div className="profile-card-row">
-              <span className="k">학과</span>
-              <span className="v">{p.available ? p.dashboard.profile.department : "—"}</span>
+              <span className="k">전공</span>
+              <span className="v">
+                {p.available ? [p.primaryMajor, ...p.extraMajors].join(" · ") : "—"}
+              </span>
             </div>
             <div className="profile-card-row">
               <span className="k">학년</span>
