@@ -1,7 +1,7 @@
 // 데모 프로필 A~D. 각 프로필이 학생 데이터(전공/학년/평점) + 이수과목 + 분석 결과를 보유.
 // 학생 A = 현재 내 정보 (김재원 · 1전공 아트&테크놀로지 · 2전공 컴퓨터공학 · 3학년 · 평점 3.24).
 // 학생 B~D = 실데이터 기반 (2026-07-18 A4 주입): 2차 수령분의 실제 학생 3명 이력.
-//   B 경제+경영 다전공 4학년 · C 심리 단일전공 2학년 재학 · D 경영+컴공+데이터사이언스 3전공 4학년.
+//   B 경제+경영 다전공 4학년 · C 심리 단일전공 2학년 재학 · D 수학+경제+컴공 3전공 4학년.
 //   gpa 는 수강내역에 성적이 없어 null(— 표시). dashboard 는 헤더·프로필 카드용 —
 //   카드 내용은 실모드에서 POST /analyze 가 채운다 (mock 모드에선 B~D 카드 빈 화면).
 
@@ -80,11 +80,11 @@ export const profiles: DemoProfile[] = [
     id: "D",
     label: "학생 D",
     available: true,
-    primaryMajor: "경영학부(경영학전공)",
-    extraMajors: ["컴퓨터공학과", "경영 데이터사이언스"],
+    primaryMajor: "수학과",
+    extraMajors: ["경제학과", "컴퓨터공학과"],
     year: 4,
     gpa: null,
     takenCourses: takenCoursesD,
-    dashboard: emptyDashboard("학생 D", "경영학", "4학년", 123),
+    dashboard: emptyDashboard("학생 D", "수학", "4학년", 168),
   },
 ];
