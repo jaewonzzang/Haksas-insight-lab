@@ -70,7 +70,8 @@ class Collected(NamedTuple):
     signals_by_label: dict[str, dict[str, float]]
     fulfill: dict[str, float | None]
     restrictions: list[sqlite3.Row]
-    student_depts: set[str]
+    primary_depts: set[str]  # 1전공 학과 합집합 (원문 표기)
+    all_depts: set[str]  # 전 전공 학과 합집합
 
 
 def collect(
@@ -100,7 +101,9 @@ def collect(
     general_pool = _pool([GENERAL_DEPT])
     pool = major_pool + general_pool
     pool_ids = [r["course_id"] for r in pool]
-    student_depts = {student.department, *student.extra_majors, *_major_departments(student)}
+    # 수강 제한 판정용 전공 지위 — 1전공("1전공 가능" 화이트리스트 매칭)과 전 전공 구분
+    primary_depts = {student.department, *candidate_departments(student.department)}
+    all_depts = {*primary_depts, *student.extra_majors, *_major_departments(student)}
 
     signals_by_label: dict[str, dict[str, float]] = {}
     fulfill: dict[str, float | None] = {}
@@ -139,7 +142,9 @@ def collect(
         fulfill = prereq_filter.fulfillments(taken, pool_ids, trees)
         restrictions = course_queries.list_restrictions_for(con, pool_ids)
 
-    return Collected(major_pool, general_pool, signals_by_label, fulfill, restrictions, student_depts)
+    return Collected(
+        major_pool, general_pool, signals_by_label, fulfill, restrictions, primary_depts, all_depts
+    )
 
 
 def rank(c: Collected) -> dict[str, ScoredCandidate]:
@@ -148,12 +153,7 @@ def rank(c: Collected) -> dict[str, ScoredCandidate]:
         **hybrid.combine(c.signals_by_label, c.fulfill, [r["course_id"] for r in c.major_pool]),
         **hybrid.combine(c.signals_by_label, c.fulfill, [r["course_id"] for r in c.general_pool]),
     }
-    return restriction_filter.apply(
-        scored,
-        c.student_depts,
-        True,  # StudentInput 에 전공 구분 없음 — 데모 학생은 1전공 관점
-        c.restrictions,
-    )
+    return restriction_filter.apply(scored, c.primary_depts, c.all_depts, c.restrictions)
 
 
 def build(

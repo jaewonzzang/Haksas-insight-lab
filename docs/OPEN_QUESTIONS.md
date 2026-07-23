@@ -10,6 +10,7 @@
 - **카드 구성** → A (추천 과목, 가로 2칸), C (다전공 경로), D (유사 졸업생 진로). 카드 B 제거.
 - **학과명 정규화** → 원문 보존, 추천 풀 산출 시점에 합집합 적용.
 - **수강 제한 패턴** → 4가지 정형 (`allowed`, `forbidden`, `major_only_allowed`, `major_only_forbidden`). 비정형 0건.
+- **수강 제한 화이트리스트 시행** → 구 "allowed 계열은 정보성(비차단)" 결정을 **뒤집음** (2026-07-23 사용자 확정). 계기: 학생 A(컴공 2전공)에게 CSE2035 "컴퓨터공학과(1전공 가능)"가 추천되던 실사례. `restriction_filter`가 화이트리스트 행 보유 과목을 학생 미포함 시 차단하고, 학과별 전공 지위(1전공/2전공)를 구분(구 `is_first_major=True` 평탄화 제거). 비정형 비고(remarks 학번 홀짝 등)는 여전히 시행 불가 — 최종 판정은 수강신청 시스템 게이트로 위임.
 - **다학기 저장** → course_offerings 테이블 신설 (courses 는 latest-wins 1행, 개설 이력 분리). 6테이블.
 - **카드 A 응답 구조 (구 A2)** → 통합 `DashboardResponse` 유지. `frontend/src/types/api.ts` 확장 계약이 진실원, 백엔드 `schemas/cards.py`가 미러 (2026-07-06 확정).
 - **"왜?" 패널 데이터 (구 A13)** → 전용 why 필드 신설 없이 기존 `factors`/`why_summary`/`cluster` 필드를 백엔드가 결정론 점수 분해로 채움 (2026-07-06 확정).
