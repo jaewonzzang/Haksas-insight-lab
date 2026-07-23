@@ -47,6 +47,15 @@ def con():
         "INSERT INTO course_restrictions (course_id, target_dept, status, raw_text) "
         "VALUES ('CSE4040', '컴퓨터공학과', 'forbidden', '컴퓨터공학과(불가능)')"
     )
+    con.executemany(
+        "INSERT INTO course_categories (course_id, major_raw, major_canonical, category) "
+        "VALUES (?, ?, ?, ?)",
+        [
+            ("CSE2020", "컴퓨터공학", "컴퓨터공학과", "전공선택"),
+            ("CSE2020", "인공지능학", "인공지능학과", "전공필수"),  # 타전공 구분 — 제외돼야 함
+            ("REL1001", None, None, "교양"),
+        ],
+    )
     yield con
     con.close()
 
@@ -74,6 +83,11 @@ def test_build_full_pipeline(con):
         assert c.area_label is None                        # A6 미결
         assert c.kind in ("major", "free")
         assert c.factors and c.reason_short and c.why_summary
+    # 이수구분 주석: 학생 전공(컴공) 구분만 — 타전공(인공지능학과) 구분은 제외
+    by_id = {c.course_id: c for c in card.candidates}
+    assert by_id["CSE2020"].categories == ["전공선택"]
+    assert by_id["REL1001"].categories == ["교양"]
+    assert by_id["CSE3030"].categories == []               # 성격표 없는 과목
 
 
 def test_deterministic_order(con):

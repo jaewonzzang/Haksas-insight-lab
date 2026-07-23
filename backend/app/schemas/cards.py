@@ -31,6 +31,10 @@ class RecommendedCourse(BaseModel):
     kind: CourseKind
     kind_label: str = Field(..., description='모달 구분 표기, 예: "전공선택" / "교양"')
     area_label: str | None = None
+    categories: list[str] = Field(
+        default_factory=list,
+        description="학생 전공 기준 이수구분 (전공필수/전공선택/… + 교양/자유선택) — 카드 A 성격 필터용",
+    )
     factors: list[RecommendationFactor] = Field(..., description="why-panel 기여도 분해")
     why_summary: str = Field(..., description="why-panel 한 줄 요약")
 

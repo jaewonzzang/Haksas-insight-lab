@@ -66,6 +66,7 @@ export interface RecommendedCourse {
   kind: CourseKind;
   kind_label: string; // 모달 구분 표기, 예: "전공선택" / "교양"
   area_label?: string | null; // 예: "공통선택 ④" / "자유선택 (언어·문화)"
+  categories?: string[]; // 학생 전공 기준 이수구분 — 성격 필터용 (mock 픽스처엔 없을 수 있음)
   factors: RecommendationFactor[]; // why-panel 기여도 분해
   why_summary: string; // why-panel 한 줄 요약
 }

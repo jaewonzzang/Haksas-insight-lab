@@ -23,8 +23,8 @@ NEXT_SEMESTER = "2026-2"
 GPA_SCALE = 4.3
 
 # 전공측 성격 (학생 전공별 집계) · 교양측 성격 (전공 무관 합산). 표시 순서 = 이 순서.
-_MAJOR_CATS = ("전공입문", "전공필수", "전공선택", "학부공통")
-_GENERAL_CATS = ("교양", "자유선택")
+_MAJOR_CATS = card_a.MAJOR_CATS
+_GENERAL_CATS = card_a.GENERAL_CATS
 
 
 def _credit_summary(student: StudentInput, con: sqlite3.Connection) -> list[CategoryCredit]:

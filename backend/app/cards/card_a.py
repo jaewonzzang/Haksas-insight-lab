@@ -10,7 +10,7 @@ from typing import NamedTuple
 from app.adapters.alumni_types import AlumniRecord
 from app.core import year_rules
 from app.core.alias_resolver import expand_taken
-from app.core.dept_normalizer import candidate_departments
+from app.core.dept_normalizer import candidate_departments, canonical
 from app.db.queries import course_queries, prereq_queries
 from app.engines.recommender import (
     collaborative,
@@ -28,6 +28,11 @@ TOP_N_PER_GROUP = 4
 CANDIDATES_CAP = 20
 TARGET_SEMESTER = 2  # 추천 대상 = 다음 학기 (2026-2)
 GENERAL_DEPT = "전인교육원"
+
+# 이수구분 버킷 (course_categories.category) — dashboard.credit_summary 와 공유
+MAJOR_CATS = ("전공입문", "전공필수", "전공선택", "학부공통")
+GENERAL_CATS = ("교양", "자유선택")
+_CAT_ORDER = {c: i for i, c in enumerate((*MAJOR_CATS, *GENERAL_CATS))}
 
 # 대학원 연계(G코드: 학과코드+G+숫자3) · 캡스톤 과목은 학부 추천 풀에서 제외 (2026-07-12)
 _GRAD_CODE = re.compile(r"[A-Z]{2,4}G\d{3}")
@@ -171,6 +176,9 @@ def build(
     )
     major_top = [c for c in ranked if c in major_ids][:TOP_N_PER_GROUP]
     general_top = [c for c in ranked if c not in major_ids][:TOP_N_PER_GROUP]
+    cats_by_id = _categories(
+        student, con, sorted({*major_top, *general_top, *ranked[:CANDIDATES_CAP]})
+    )
 
     def _course(cid: str) -> RecommendedCourse:
         row, sc = rows_by_id[cid], scored[cid]
@@ -185,6 +193,7 @@ def build(
             kind="major" if is_major else "free",
             kind_label="전공" if is_major else "교양",
             area_label=None,  # A6 미결 — 교양 영역 매핑 없음
+            categories=cats_by_id.get(cid, []),
             factors=[RecommendationFactor(**f.model_dump()) for f in sc.factors],
             why_summary=f"{sc.grade} · 추천도 {sc.score_percent}%",
         )
@@ -194,6 +203,25 @@ def build(
         general=[_course(c) for c in general_top],
         candidates=[_course(c) for c in ranked[:CANDIDATES_CAP]],
     )
+
+
+def _categories(
+    student: StudentInput, con: sqlite3.Connection, course_ids: list[str]
+) -> dict[str, list[str]]:
+    """추천 과목별 이수구분 라벨 — 전공측은 학생 전공에 해당하는 것만, 교양측은 전공 무관."""
+    student_majors: list[str] = []
+    for m in (student.department, *student.extra_majors):
+        c = canonical(m)
+        if c not in student_majors:
+            student_majors.append(c)
+    out: dict[str, list[str]] = {}
+    for r in course_queries.category_credits(con, course_ids):
+        cat = r["category"]
+        if (cat in MAJOR_CATS and r["major_canonical"] in student_majors) or cat in GENERAL_CATS:
+            cats = out.setdefault(r["course_id"], [])
+            if cat not in cats:
+                cats.append(cat)
+    return {cid: sorted(cats, key=_CAT_ORDER.__getitem__) for cid, cats in out.items()}
 
 
 def _fallback_reason(sc: ScoredCandidate) -> str:
