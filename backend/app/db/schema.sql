@@ -29,6 +29,7 @@
 -- ============================================================
 -- DROP (FK 의존성 역순)
 -- ============================================================
+DROP TABLE IF EXISTS course_categories;
 DROP TABLE IF EXISTS course_offerings;
 DROP TABLE IF EXISTS course_restrictions;
 DROP TABLE IF EXISTS course_aliases;
@@ -109,6 +110,20 @@ CREATE TABLE course_syllabi (
 );
 
 -- ============================================================
+-- course_categories : 과목별 이수구분(성격) — (과목 × 전공) 다대다
+--   과목구분표("{전공} {유형}")를 분해·정규화. 적재: scripts/build_course_categories.py.
+--   major_canonical NULL = 교양/자유선택/기타 (전공 무관). 학부공통은 소속 학과로 전개.
+-- ============================================================
+CREATE TABLE course_categories (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    course_id       TEXT    NOT NULL,
+    major_raw       TEXT,             -- 원문 전공 표기 (전공측만)
+    major_canonical TEXT,             -- 정규화 학과. NULL = 교양/자유선택/기타/미매핑
+    category        TEXT    NOT NULL, -- 전공입문|전공필수|전공선택|학부공통|자유선택|교양|기타|계열입학표기|미상
+    area_label      TEXT              -- 교양 영역명 등 (아니면 NULL)
+);
+
+-- ============================================================
 -- course_aliases : 옛 코드 / 대체과목 별칭 (단방향)
 --   의미: old_* 이수 -> new_course_id 이수로 간주
 -- ============================================================
@@ -174,3 +189,5 @@ CREATE INDEX idx_aliases_new              ON course_aliases(new_course_id);
 CREATE INDEX idx_aliases_old              ON course_aliases(old_course_id);
 CREATE INDEX idx_warnings_severity        ON parse_warnings(severity);
 CREATE INDEX idx_warnings_course          ON parse_warnings(course_id);
+CREATE INDEX idx_categories_course        ON course_categories(course_id);
+CREATE INDEX idx_categories_major         ON course_categories(major_canonical);

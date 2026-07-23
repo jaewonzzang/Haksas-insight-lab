@@ -133,6 +133,15 @@ class KpiStrip(BaseModel):
     similar_alumni_n: int
 
 
+class CategoryCredit(BaseModel):
+    """과목 성격별 이수 학점 집계 (참고용 카운트, 요건 판정 아님)."""
+
+    major: str | None = Field(None, description="정규화 학과. None = 교양/자유선택(전공 무관)")
+    category: str = Field(..., description="전공필수 / 전공선택 / 전공입문 / 학부공통 / 교양 / 자유선택")
+    credits: float
+    course_count: int
+
+
 class DashboardResponse(BaseModel):
     """POST /analyze 통합 응답."""
 
@@ -142,3 +151,6 @@ class DashboardResponse(BaseModel):
     card_c: CardC
     card_d: CardD
     cluster: ClusterEvidence
+    credit_summary: list[CategoryCredit] = Field(
+        default_factory=list, description="이수과목 성격별 학점 (전공별 + 교양/자유선택)"
+    )

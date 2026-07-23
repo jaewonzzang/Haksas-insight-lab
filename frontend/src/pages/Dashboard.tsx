@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import BrandHeader from "../components/BrandHeader";
 import ClusterPanel from "../components/ClusterPanel";
+import CreditSummary from "../components/CreditSummary";
 import KpiStrip from "../components/KpiStrip";
 import MoreModal from "../components/MoreModal";
 import PdfExportButton from "../components/PdfExportButton";
@@ -40,7 +41,7 @@ export default function Dashboard({ data, onReset }: Props) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const { profile, kpi, card_a, card_c, card_d, cluster } = data;
+  const { profile, kpi, card_a, card_c, card_d, cluster, credit_summary } = data;
 
   return (
     <div className="page">
@@ -62,6 +63,7 @@ export default function Dashboard({ data, onReset }: Props) {
       />
 
       <KpiStrip kpi={kpi} />
+      <CreditSummary items={credit_summary} />
 
       <div className="grid">
         <CardA data={card_a} onOpenWhy={() => setPanel("why")} onOpenMore={() => setModalOpen(true)} />

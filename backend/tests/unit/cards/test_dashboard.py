@@ -41,6 +41,7 @@ def _stub_cards(monkeypatch):
         dashboard.course_queries, "list_by_ids",
         lambda con, ids: [{"credit": 3.0}, {"credit": None}],
     )
+    monkeypatch.setattr(dashboard.course_queries, "category_credits", lambda con, ids: [])
 
 
 def test_assembles_profile_kpi_with_fallback(monkeypatch):

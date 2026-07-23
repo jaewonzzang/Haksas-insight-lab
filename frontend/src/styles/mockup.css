@@ -831,3 +831,50 @@
   .card, .kpi-row, .career-sub, .baseline-box, .card.card-wide { break-inside: avoid; }
   .path-item .path-detail { max-height: none !important; } /* 경로 상세 전체 펼쳐 인쇄 */
 }
+
+/* 이수 현황 · 성격별 학점 카운트 (CreditSummary) */
+.credit-summary {
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--bg);
+  padding: 14px 18px;
+  margin-top: 16px;
+}
+.credit-summary-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-sub);
+  margin-bottom: 12px;
+}
+.credit-summary-note {
+  font-weight: 400;
+  color: var(--text-mute);
+  font-size: 12px;
+}
+.credit-summary-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+.credit-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.credit-group-major {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px 11px;
+}
+.credit-pill {
+  font-size: 13px;
+  color: var(--text-sub);
+  white-space: nowrap;
+}
+.credit-pill b { color: var(--text); font-weight: 700; }
+.credit-pill em { color: var(--text-mute); font-style: normal; font-size: 12px; }

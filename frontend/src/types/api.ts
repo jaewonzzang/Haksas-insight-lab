@@ -149,6 +149,14 @@ export interface ClusterEvidence {
   summary: string;
 }
 
+// ===== 이수 현황 (성격별 학점 카운트, 참고용) =====
+export interface CategoryCredit {
+  major: string | null; // 정규화 학과. null = 교양/자유선택(전공 무관)
+  category: string; // 전공필수 / 전공선택 / 전공입문 / 학부공통 / 교양 / 자유선택
+  credits: number;
+  course_count: number;
+}
+
 // ===== 대시보드 응답 =====
 export interface DashboardResponse {
   profile: StudentProfile;
@@ -157,4 +165,5 @@ export interface DashboardResponse {
   card_c: CardC;
   card_d: CardD;
   cluster: ClusterEvidence;
+  credit_summary?: CategoryCredit[]; // 성격별 이수 학점 (mock 픽스처엔 없을 수 있어 optional)
 }

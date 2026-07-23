@@ -99,3 +99,23 @@ def list_aliases(con: sqlite3.Connection) -> list[sqlite3.Row]:
     return con.execute(
         "SELECT old_course_id, old_course_name, new_course_id FROM course_aliases"
     ).fetchall()
+
+
+def category_credits(
+    con: sqlite3.Connection, course_ids: Sequence[str]
+) -> list[sqlite3.Row]:
+    """이수과목의 (성격·학과) × 학점 — course_categories ⋈ courses(credit).
+
+    한 과목이 (과목 × 전공) 다대다라 여러 행이 나올 수 있다. courses 에 없는
+    폐강 코드는 학점을 못 구해 제외된다(집계 대상 아님).
+    """
+    if not course_ids:
+        return []
+    marks = ", ".join("?" for _ in course_ids)
+    return con.execute(
+        f"""SELECT cc.course_id, cc.major_canonical, cc.category, c.credit
+            FROM course_categories cc
+            JOIN courses c ON c.course_id = cc.course_id
+            WHERE cc.course_id IN ({marks})""",
+        tuple(course_ids),
+    ).fetchall()
