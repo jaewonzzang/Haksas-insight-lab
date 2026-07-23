@@ -4,7 +4,7 @@
 import { mockDashboard } from "../mock/dashboard.fixture";
 import type { DashboardResponse, StudentInput } from "../types/api";
 
-const BASE_URL = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
+export const BASE_URL = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
 
 // mock 토글: VITE_USE_MOCK 명시 시 그 값, 아니면 dev=mock / prod=real.
 // 백엔드 /analyze 준비되면 VITE_USE_MOCK=false 로 끄면 됨 (재배선 불필요).

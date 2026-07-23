@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import config
-from app.api import analyze, courses, health
+from app.api import analyze, courses, health, syllabus
 
 app = FastAPI(title="S-Compass", version="0.1.0")
 
@@ -24,5 +24,6 @@ app.add_middleware(
 
 app.include_router(health.router)
 app.include_router(analyze.router)
+app.include_router(syllabus.router)  # PDF 없는 배포 데모에선 404 — 프론트가 링크 자체를 숨김
 if config.EXPOSE_DEBUG_ROUTES:  # 디버그 라우트 — 데모 배포에서 비노출 (외부 노출 X 규칙)
     app.include_router(courses.router)

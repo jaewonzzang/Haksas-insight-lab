@@ -8,6 +8,7 @@ import sqlite3
 from typing import NamedTuple
 
 from app.adapters.alumni_types import AlumniRecord
+from app.cards import syllabus
 from app.core import year_rules
 from app.core.alias_resolver import expand_taken
 from app.core.dept_normalizer import candidate_departments, canonical
@@ -176,9 +177,9 @@ def build(
     )
     major_top = [c for c in ranked if c in major_ids][:TOP_N_PER_GROUP]
     general_top = [c for c in ranked if c not in major_ids][:TOP_N_PER_GROUP]
-    cats_by_id = _categories(
-        student, con, sorted({*major_top, *general_top, *ranked[:CANDIDATES_CAP]})
-    )
+    out_ids = sorted({*major_top, *general_top, *ranked[:CANDIDATES_CAP]})
+    cats_by_id = _categories(student, con, out_ids)
+    syllabus_urls = syllabus.urls_for(con, out_ids)
 
     def _course(cid: str) -> RecommendedCourse:
         row, sc = rows_by_id[cid], scored[cid]
@@ -194,6 +195,7 @@ def build(
             kind_label="전공" if is_major else "교양",
             area_label=None,  # A6 미결 — 교양 영역 매핑 없음
             categories=cats_by_id.get(cid, []),
+            syllabus_url=syllabus_urls.get(cid),
             factors=[RecommendationFactor(**f.model_dump()) for f in sc.factors],
             why_summary=f"{sc.grade} · 추천도 {sc.score_percent}%",
         )

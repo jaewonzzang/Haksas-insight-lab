@@ -35,6 +35,9 @@ class RecommendedCourse(BaseModel):
         default_factory=list,
         description="학생 전공 기준 이수구분 (전공필수/전공선택/… + 교양/자유선택) — 카드 A 성격 필터용",
     )
+    syllabus_url: str | None = Field(
+        None, description="강의계획서 PDF 경로 (/syllabus/{id}) — 로컬 파일 실재 시에만"
+    )
     factors: list[RecommendationFactor] = Field(..., description="why-panel 기여도 분해")
     why_summary: str = Field(..., description="why-panel 한 줄 요약")
 
