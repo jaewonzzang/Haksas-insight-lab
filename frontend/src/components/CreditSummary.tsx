@@ -20,10 +20,7 @@ export default function CreditSummary({ items }: Props) {
 
   return (
     <div className="credit-summary">
-      <div className="credit-summary-title">
-        이수 현황 · 과목 성격별 학점
-        <span className="credit-summary-note"> 참고용 카운트 — 졸업요건 판정 아님</span>
-      </div>
+      <div className="credit-summary-title">이수 현황 · 과목 성격별 학점</div>
       <div className="credit-summary-groups">
         {groups.map((g) => (
           <div key={g.major} className="credit-group">

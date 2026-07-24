@@ -870,11 +870,6 @@
   color: var(--text-sub);
   margin-bottom: 12px;
 }
-.credit-summary-note {
-  font-weight: 400;
-  color: var(--text-mute);
-  font-size: 12px;
-}
 .credit-summary-groups {
   display: flex;
   flex-wrap: wrap;
