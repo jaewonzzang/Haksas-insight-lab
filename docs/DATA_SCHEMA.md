@@ -135,4 +135,4 @@ CREATE TABLE course_offerings (
 - mock 산출: `scripts/generate_mock_alumni.py` → `data/mock/alumni.json`.
 - 실데이터 매핑/스위치: `adapters/real_alumni.py` + `config.ALUMNI_SOURCE` (스펙 §5).
 
-상세: `superpowers/specs/2026-06-29-alumni-data-frame-design.md`, 미결정 잔여는 `OPEN_QUESTIONS.md` A1.
+미결정 잔여는 `OPEN_QUESTIONS.md` A1.

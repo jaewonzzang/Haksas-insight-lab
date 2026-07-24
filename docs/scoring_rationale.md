@@ -125,4 +125,3 @@
 ## 관련
 
 - 수치·공식: `backend/app/engines/recommender/weights.py`, `scoring.py`
-- 설계 스펙: `docs/superpowers/specs/2026-06-30-card-a-scoring-weights-design.md`
