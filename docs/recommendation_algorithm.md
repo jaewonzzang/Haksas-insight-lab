@@ -1,6 +1,7 @@
 # 추천도 알고리즘 요약
 
-> 설명용 요약본. 상세 근거·실측·예상 질문 답변은 `scoring_rationale.md`. 구현: `engines/recommender/`.
+> 설명용 요약본. 전문가용 명세는 `recommendation_algorithm_technical.md`,
+> 상세 근거·실측·예상 질문 답변은 `scoring_rationale.md`. 구현: `engines/recommender/`.
 > 용어는 쉬운 말로 쓰고 괄호에 원어를 남겼다 — 전문적인 질문이 들어오면 괄호 안 단어로 받으면 된다.
 
 ## 한 줄 요약
