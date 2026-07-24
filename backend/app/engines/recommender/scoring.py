@@ -2,7 +2,6 @@
 
 정규화 가중합(hybrid) → 선이수 감산 → 고정 컷오프. signal 계산과 분리된 순수 함수.
 가중치/감산/컷오프는 weights.py (전문가 prior). restriction·LLM·signal 계산은 범위 밖.
-스펙: docs/superpowers/specs/2026-06-30-card-a-scoring-weights-design.md
 """
 
 from typing import Literal

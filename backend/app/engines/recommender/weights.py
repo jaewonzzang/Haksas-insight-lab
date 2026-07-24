@@ -8,7 +8,6 @@
 근거·논의: docs/advisory_2026-07-22.md §3, docs/scoring_rationale.md §6.
 총합 100이라 4요인 다 있으면 명목=실효; 요인이 빠지면 scoring 이 재정규화.
 키 순서 = factors[] 표시 순서.
-스펙: docs/superpowers/specs/2026-06-30-card-a-scoring-weights-design.md
 """
 
 FACTOR_WEIGHTS: dict[str, float] = {

@@ -1,7 +1,6 @@
 """카드별 (system, user, schema) 프롬프트 빌더 + 통역 출력 스키마.
 
 LLM에는 정형 값만 전달하고 문장화만 요청한다. 점수·판정 로직 금지 (CLAUDE.md).
-스펙: docs/superpowers/specs/2026-07-10-w5-llm-translator-design.md
 """
 
 import json

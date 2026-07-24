@@ -1,7 +1,6 @@
 """카드별 통역 패스: 완성 카드 객체의 텍스트 필드만 교체하는 순수 함수.
 
 build()는 불변(스펙 안 A). provider=None·LLM 실패는 전부 입력 그대로 반환으로 흡수.
-스펙: docs/superpowers/specs/2026-07-10-w5-llm-translator-design.md
 """
 
 from app.llm import prompts
