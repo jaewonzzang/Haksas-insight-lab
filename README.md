@@ -174,15 +174,14 @@ $ npm run dev
 │   └── tests/ : unit / integration
 │
 ├── frontend/ : Vite + React 18 + TypeScript + Tailwind
-│   ├── src/
-│   │   ├── components/ : BrandHeader, KpiStrip, CreditSummary, WhyPanel ...
-│   │   │   └── cards/ : CardA / CardC / CardD
-│   │   ├── pages/Dashboard.tsx
-│   │   ├── lib/api.ts : POST /analyze 클라이언트
-│   │   ├── types/api.ts : 백엔드 schemas 와 수동 동기화
-│   │   ├── mock/ : 데모 프로필 A~D fixture
-│   │   └── styles/
-│   └── legacy/ : 디자인 프로토타입 (빌드 제외, 참조용)
+│   └── src/
+│       ├── components/ : BrandHeader, KpiStrip, CreditSummary, WhyPanel ...
+│       │   └── cards/ : CardA / CardC / CardD
+│       ├── pages/Dashboard.tsx
+│       ├── lib/api.ts : POST /analyze 클라이언트
+│       ├── types/api.ts : 백엔드 schemas 와 수동 동기화
+│       ├── mock/ : 데모 프로필 A~D fixture
+│       └── styles/
 │
 └── docs/ : 아키텍처 / 데이터 스키마 / API / 미결정 사항
 ```

@@ -6,7 +6,6 @@ Vite + React 18 + TypeScript + Tailwind.
 - API 클라이언트: `src/lib/api.ts` (백엔드 `POST /analyze` 호출)
 - 타입: `src/types/api.ts` ← 백엔드 `backend/app/schemas/`와 동기화 필요
 - 디자인 토큰: `src/styles/tokens.ts` (Tailwind theme.extend에 등록)
-- 프로토타입 원본: `legacy/` (빌드 제외, 참조용)
 
 ## 개발 실행 (예정)
 

@@ -34,7 +34,7 @@ export default function LoginScreen({ onLogin }: Props) {
         <button type="submit" className="analyze-btn login-btn" disabled={submitting}>
           {submitting ? <span className="login-btn-spinner" /> : "로그인"}
         </button>
-        <div className="login-foot">S-Compass · 학업 분석 데모</div>
+        <div className="login-foot">Saint+ · 학업 분석 데모</div>
       </form>
     </div>
   );
