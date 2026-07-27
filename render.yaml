@@ -1,15 +1,16 @@
 # Render Blueprint — 컨설팅 데모 배포 (2026-07-20)
 #
 # 주의: 배포는 **비공개 미러 리포**(코드 + git 제외 데이터 포함)에서 한다.
+# 배포 URL은 리포에 두지 않고 Render 대시보드 환경변수로 주입한다 (`sync: false`).
 # 공개 리포에는 학사 데이터가 없어 이 파일만으로는 백엔드가 뜨지 않는다(의도된 제약).
-# 서비스명 접미어(k7x2)는 URL 추측을 어렵게 하기 위한 난수. 컨설팅 종료 후 서비스 삭제.
+# 컨설팅 종료 후 서비스 삭제.
 #
 # 안전장치: EXPOSE_DEBUG_ROUTES=0 (/courses 비노출), ANTHROPIC_API_KEY 미주입
 # (LLM 통역은 결정론 폴백으로 동작 — 외부 호출 비용 0).
 
 services:
   - type: web
-    name: saintplus-demo-api-k7x2
+    name: saintplus-demo-api
     runtime: python
     rootDir: backend
     plan: free
@@ -20,18 +21,20 @@ services:
         value: "3.13"
       - key: EXPOSE_DEBUG_ROUTES
         value: "0"
+      # 프론트 배포 origin — 대시보드에서 주입 (리포에 URL 미노출)
       - key: CORS_EXTRA_ORIGIN
-        value: https://saintplus-demo-k7x2.onrender.com
+        sync: false
 
   - type: web
-    name: saintplus-demo-k7x2
+    name: saintplus-demo
     runtime: static
     rootDir: frontend
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
     envVars:
+      # API 배포 주소 — 대시보드에서 주입 (리포에 URL 미노출)
       - key: VITE_API_BASE
-        value: https://saintplus-demo-api-k7x2.onrender.com
+        sync: false
       - key: VITE_USE_MOCK
         value: "false"
       # Render 가 buildCommand 이전에 자체 npm install 을 돌린다. vite 8 ↔
