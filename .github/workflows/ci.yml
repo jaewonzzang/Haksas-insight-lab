@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        working-directory: backend
+        run: uv sync --extra dev
+
+      # 학사 원본 데이터 빌드 산출물(git 제외)·외부 LLM 키가 필요한 테스트는 제외.
+      # 마커 정의는 backend/pyproject.toml [tool.pytest.ini_options].
+      - name: Run tests
+        working-directory: backend
+        run: uv run pytest tests -m "not requires_data and not requires_llm" -q
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # vite 8 ↔ @vitejs/plugin-react 4.x peer 선언(≤7) 충돌로 npm ci 가 ERESOLVE 로
+      # 실패한다. render.yaml 배포와 동일하게 완화 (lockfile 조합은 그대로 설치됨).
+      - name: Install dependencies
+        working-directory: frontend
+        env:
+          NPM_CONFIG_LEGACY_PEER_DEPS: "true"
+        run: npm ci
+
+      # 백엔드 없이 빌드되도록 mock 모드로 고정
+      - name: Build
+        working-directory: frontend
+        env:
+          VITE_USE_MOCK: "true"
+        run: npm run build

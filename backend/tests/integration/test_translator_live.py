@@ -7,9 +7,10 @@ from app.llm import prompts, translator
 from app.llm.providers.anthropic import get_provider
 from app.schemas.cards import CardD, CareerEntry, CareerPattern, ClusterEvidence
 
-pytestmark = pytest.mark.skipif(
-    not config.ANTHROPIC_API_KEY, reason="ANTHROPIC_API_KEY 없음"
-)
+pytestmark = [
+    pytest.mark.requires_llm,
+    pytest.mark.skipif(not config.ANTHROPIC_API_KEY, reason="ANTHROPIC_API_KEY 없음"),
+]
 
 
 def test_live_card_d_translation():

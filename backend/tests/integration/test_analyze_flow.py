@@ -7,10 +7,13 @@ from app import config
 from app.main import app
 from app.schemas.cards import DashboardResponse
 
-pytestmark = pytest.mark.skipif(
-    not config.DB_PATH.exists() or not config.ALUMNI_MOCK_PATH.exists(),
-    reason="실 DB 또는 mock alumni 없음 (build_course_db / generate_mock_alumni 필요)",
-)
+pytestmark = [
+    pytest.mark.requires_data,
+    pytest.mark.skipif(
+        not config.DB_PATH.exists() or not config.ALUMNI_MOCK_PATH.exists(),
+        reason="실 DB 또는 mock alumni 없음 (build_course_db / generate_mock_alumni 필요)",
+    ),
+]
 
 # 학생 A 실 이수 32과목 (frontend takenCourses.fixture 매핑과 동일) + 군이러닝 placeholder 2건
 TAKEN = [

@@ -11,6 +11,8 @@ from app.cards import card_c, card_d
 from app.db.connection import get_connection
 from app.schemas.input import StudentInput
 
+pytestmark = pytest.mark.requires_data
+
 
 @pytest.fixture(scope="module")
 def con():

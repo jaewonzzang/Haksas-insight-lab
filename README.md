@@ -1,5 +1,7 @@
 # Saint+
 
+[![CI](https://github.com/jaewonzzang/Haksas-insight-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/jaewonzzang/Haksas-insight-lab/actions/workflows/ci.yml)
+
 <div align="center">
 <img width="240" alt="서강대학교" src="./logo_sogang.png">
 </div>

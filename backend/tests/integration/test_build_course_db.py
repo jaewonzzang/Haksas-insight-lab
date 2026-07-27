@@ -23,6 +23,8 @@ TABLES = [
     "course_aliases", "course_restrictions", "parse_warnings",
 ]
 
+pytestmark = pytest.mark.requires_data
+
 
 @pytest.fixture(scope="module")
 def built_db(tmp_path_factory):

@@ -34,3 +34,7 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "requires_data: 학사 원본 데이터 빌드 산출물이 필요 (CI 제외)",
+    "requires_llm: 외부 LLM API 키가 필요 (CI 제외)",
+]
