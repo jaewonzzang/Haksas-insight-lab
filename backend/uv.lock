@@ -1039,7 +1039,7 @@ wheels = [
 ]
 
 [[package]]
-name = "s-compass-backend"
+name = "saint-plus-backend"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

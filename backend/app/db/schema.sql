@@ -1,4 +1,4 @@
--- S-Compass 1단계 산출물 DDL
+-- Saint+ 1단계 산출물 DDL
 -- 대상 DB: backend/data/processed/s_compass_courses.db
 -- 빌드 스크립트: scripts/build_course_db.py
 -- 최종 갱신: 2026-07-06

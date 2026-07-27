@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app import config
 from app.api import analyze, courses, health, syllabus
 
-app = FastAPI(title="S-Compass", version="0.1.0")
+app = FastAPI(title="Saint+", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,

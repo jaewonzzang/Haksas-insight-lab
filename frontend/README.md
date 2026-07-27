@@ -1,4 +1,4 @@
-# S-Compass Frontend
+# Saint+ Frontend
 
 Vite + React 18 + TypeScript + Tailwind.
 

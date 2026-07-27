@@ -1,4 +1,4 @@
-# S-Compass Backend
+# Saint+ Backend
 
 FastAPI + raw `sqlite3` + LLM 통역기. ORM 없음. 4계층 아키텍처.
 

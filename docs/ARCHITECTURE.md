@@ -47,7 +47,7 @@ restriction_filter (차단: forbidden / major_only_forbidden)
 
 ## 차별화 — "LLM ≠ 생성형 AI"
 
-대다수 출품작이 LLM 챗봇 형태인 것과 달리, S-Compass는:
+대다수 출품작이 LLM 챗봇 형태인 것과 달리, Saint+는:
 
 - 점수 계산·판정·추천: 결정론적 알고리즘 + ML 모델 (임베딩/추천/클러스터링/예측).
 - LLM 역할: **정형 결과를 1~2문장 자연어로 통역만**. "왜?" 패널에서 더 긴 설명.

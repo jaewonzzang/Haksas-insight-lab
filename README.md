@@ -1,4 +1,4 @@
-# Saint+ (코드명 S-Compass)
+# Saint+
 
 <div align="center">
 <img width="240" alt="서강대학교" src="./logo_sogang.png">
