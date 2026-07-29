@@ -104,16 +104,17 @@ $ npm run dev
 
 ---
 
-## 화면 구성 📺 <- 아직 없음
+## 화면 구성 📺
 
-> 스크린샷 미탑재 — 입력 화면 / 대시보드(카드 A·C·D) 캡처를 `docs/screenshot/` 에 추가 예정.
-> 데모 모드(mock) 화면만 올린다. 실 학사 데이터 화면은 개인정보 이슈로 미공개.
+**입력 화면 — 데모 프로필 선택**
 
-<!-- TODO: 아래 표에 이미지 삽입
-| 입력 화면 | 대시보드 (카드 A/C/D) |
-| :---: | :---: |
-| <img width="329" src="./docs/screenshot/input.png"/> | <img width="329" src="./docs/screenshot/dashboard.png"/> |
--->
+<img width="880" alt="데모 프로필 선택 화면" src="./docs/screenshot/image.png"/>
+
+**분석 리포트 — KPI · 이수 현황 · 카드 A 추천 과목**
+
+<img width="880" alt="학업 분석 리포트 화면" src="./docs/screenshot/image2.png"/>
+
+> 데모 모드(mock) 화면. 실 학사 데이터 화면은 개인정보 이슈로 미공개.
 
 ---
 
